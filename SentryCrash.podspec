@@ -3,14 +3,14 @@ Pod::Spec.new do |s|
   s.name         = "SentryCrash"
   s.version      = "1.15.18"
   s.summary      = "The Ultimate iOS Crash Reporter"
-  s.homepage     = "https://github.com/sentrycrashtenerud/SentryCrash"
+  s.homepage     = "https://github.com/getsentry/SentryCrash"
   s.license     = { :type => 'SentryCrash license agreement', :file => 'LICENSE' }
-  s.author       = { "Karl Stenerud" => "sentrycrashtenerud@gmail.com" }
+  s.author       = { "Karl Stenerud" => "kstenerud@gmail.com", "Sentry" => "support@sentry.io" }
   s.ios.deployment_target =  IOS_DEPLOYMENT_TARGET
   s.osx.deployment_target =  '10.8'
   s.tvos.deployment_target =  '9.0'
   s.watchos.deployment_target =  '2.0'
-  s.source       = { :git => "https://github.com/sentrycrashtenerud/SentryCrash.git", :tag=>s.version.to_s }
+  s.source       = { :git => "https://github.com/getsentry/SentryCrash.git", :tag=>s.version.to_s }
   s.frameworks = 'Foundation'
   s.libraries = 'c++', 'z'
   s.xcconfig = { 'GCC_ENABLE_CPP_EXCEPTIONS' => 'YES' }
