@@ -72,7 +72,7 @@ void sentrycrashreport_setDoNotIntrospectClasses(const char** doNotIntrospectCla
  *
  * @param userSectionWriteCallback The user section write callback.
  */
-void sentrycrashreport_setUserSectionWriteCallback(const KSReportWriteCallback userSectionWriteCallback);
+void sentrycrashreport_setUserSectionWriteCallback(const SentryCrashReportWriteCallback userSectionWriteCallback);
 
 
 // ============================================================================

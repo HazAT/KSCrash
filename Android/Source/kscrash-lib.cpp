@@ -22,8 +22,8 @@
 
 #include <jni.h>
 #include <string>
-#include "KSJNI.h"
-#include "KSDate.h"
+#include "SentryCrashJNI.h"
+#include "SentryCrashDate.h"
 #include "SentryCrashC.h"
 
 static jclass java_util_ArrayList;
@@ -100,7 +100,7 @@ extern "C" JNIEXPORT void JNICALL
 Java_org_stenerud_sentrycrash_SentryCrash_initJNI(JNIEnv *env, jobject instance) {
     static bool isInitialized = false;
     if(!isInitialized) {
-        ksjni_init(env);
+        sentrycrashjni_init(env);
         java_util_ArrayList = static_cast<jclass>(env->NewGlobalRef(
                 env->FindClass("java/util/ArrayList")));
         java_util_ArrayList_ = env->GetMethodID(java_util_ArrayList, "<init>", "(I)V");
@@ -169,7 +169,7 @@ Java_org_stenerud_sentrycrash_MainActivity_stringFromTimestamp(JNIEnv *env, jobj
                                                            jlong timestamp) {
     char buffer[21];
     buffer[0] = 0;
-    ksdate_utcStringFromTimestamp(timestamp, buffer);
+    sentrycrashdate_utcStringFromTimestamp(timestamp, buffer);
     return env->NewStringUTF(buffer);
 }
 

@@ -79,7 +79,7 @@
 //    SentryCrashReportStore* store = [self store];
 //    NSDictionary* report = [store reportNamed:REPORT_BADPOINTER];
 //    NSString* converted = [SentryCrashReportConverter toAppleFormat:report
-//                                                    reportStyle:KSAppleReportStyleUnsymbolicated];
+//                                                    reportStyle:SentryCrashAppleReportStyleUnsymbolicated];
 //    XCTAssertNotNil(converted, @"");
 //
 //    NSString* expected = [self loadAppleReportNamed:APPLE_BADPOINTER_UNSYMBOLICATED];

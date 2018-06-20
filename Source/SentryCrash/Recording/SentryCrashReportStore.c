@@ -25,8 +25,8 @@
 //
 
 #include "SentryCrashReportStore.h"
-#include "KSLogger.h"
-#include "KSFileUtils.h"
+#include "SentryCrashLogger.h"
+#include "SentryCrashFileUtils.h"
 
 #include <dirent.h>
 #include <errno.h>
@@ -68,7 +68,7 @@ static inline int64_t getNextUniqueID()
 
 static void getCrashReportPathByID(int64_t id, char* pathBuffer)
 {
-    snprintf(pathBuffer, KSCRS_MAX_PATH_LENGTH, "%s/%s-report-%016llx.json", g_reportsPath, g_appName, id);
+    snprintf(pathBuffer, SentryCrashCRS_MAX_PATH_LENGTH, "%s/%s-report-%016llx.json", g_reportsPath, g_appName, id);
 
 }
 
@@ -88,7 +88,7 @@ static int getReportCount()
     DIR* dir = opendir(g_reportsPath);
     if(dir == NULL)
     {
-        KSLOG_ERROR("Could not open directory %s", g_reportsPath);
+        SentryCrashLOG_ERROR("Could not open directory %s", g_reportsPath);
         goto done;
     }
     struct dirent* ent;
@@ -114,7 +114,7 @@ static int getReportIDs(int64_t* reportIDs, int count)
     DIR* dir = opendir(g_reportsPath);
     if(dir == NULL)
     {
-        KSLOG_ERROR("Could not open directory %s", g_reportsPath);
+        SentryCrashLOG_ERROR("Could not open directory %s", g_reportsPath);
         goto done;
     }
 
@@ -148,7 +148,7 @@ static void pruneReports()
 
         for(int i = 0; i < reportCount - g_maxReportCount; i++)
         {
-            kscrs_deleteReportWithID(reportIDs[i]);
+            sentrycrashcrs_deleteReportWithID(reportIDs[i]);
         }
     }
 }
@@ -173,23 +173,23 @@ static void initializeIDs()
 
 // Public API
 
-void kscrs_initialize(const char* appName, const char* reportsPath)
+void sentrycrashcrs_initialize(const char* appName, const char* reportsPath)
 {
     pthread_mutex_lock(&g_mutex);
     g_appName = strdup(appName);
     g_reportsPath = strdup(reportsPath);
-    ksfu_makePath(reportsPath);
+    sentrycrashfu_makePath(reportsPath);
     pruneReports();
     initializeIDs();
     pthread_mutex_unlock(&g_mutex);
 }
 
-void kscrs_getNextCrashReportPath(char* crashReportPathBuffer)
+void sentrycrashcrs_getNextCrashReportPath(char* crashReportPathBuffer)
 {
     getCrashReportPathByID(getNextUniqueID(), crashReportPathBuffer);
 }
 
-int kscrs_getReportCount()
+int sentrycrashcrs_getReportCount()
 {
     pthread_mutex_lock(&g_mutex);
     int count = getReportCount();
@@ -197,7 +197,7 @@ int kscrs_getReportCount()
     return count;
 }
 
-int kscrs_getReportIDs(int64_t* reportIDs, int count)
+int sentrycrashcrs_getReportIDs(int64_t* reportIDs, int count)
 {
     pthread_mutex_lock(&g_mutex);
     count = getReportIDs(reportIDs, count);
@@ -205,40 +205,40 @@ int kscrs_getReportIDs(int64_t* reportIDs, int count)
     return count;
 }
 
-char* kscrs_readReport(int64_t reportID)
+char* sentrycrashcrs_readReport(int64_t reportID)
 {
     pthread_mutex_lock(&g_mutex);
-    char path[KSCRS_MAX_PATH_LENGTH];
+    char path[SentryCrashCRS_MAX_PATH_LENGTH];
     getCrashReportPathByID(reportID, path);
     char* result;
-    ksfu_readEntireFile(path, &result, NULL, 2000000);
+    sentrycrashfu_readEntireFile(path, &result, NULL, 2000000);
     pthread_mutex_unlock(&g_mutex);
     return result;
 }
 
-int64_t kscrs_addUserReport(const char* report, int reportLength)
+int64_t sentrycrashcrs_addUserReport(const char* report, int reportLength)
 {
     pthread_mutex_lock(&g_mutex);
     int64_t currentID = getNextUniqueID();
-    char crashReportPath[KSCRS_MAX_PATH_LENGTH];
+    char crashReportPath[SentryCrashCRS_MAX_PATH_LENGTH];
     getCrashReportPathByID(currentID, crashReportPath);
 
     int fd = open(crashReportPath, O_WRONLY | O_CREAT, 0644);
     if(fd < 0)
     {
-        KSLOG_ERROR("Could not open file %s: %s", crashReportPath, strerror(errno));
+        SentryCrashLOG_ERROR("Could not open file %s: %s", crashReportPath, strerror(errno));
         goto done;
     }
 
     int bytesWritten = (int)write(fd, report, (unsigned)reportLength);
     if(bytesWritten < 0)
     {
-        KSLOG_ERROR("Could not write to file %s: %s", crashReportPath, strerror(errno));
+        SentryCrashLOG_ERROR("Could not write to file %s: %s", crashReportPath, strerror(errno));
         goto done;
     }
     else if(bytesWritten < reportLength)
     {
-        KSLOG_ERROR("Expected to write %d bytes to file %s, but only wrote %d", crashReportPath, reportLength, bytesWritten);
+        SentryCrashLOG_ERROR("Expected to write %d bytes to file %s, but only wrote %d", crashReportPath, reportLength, bytesWritten);
     }
 
 done:
@@ -251,21 +251,21 @@ done:
     return currentID;
 }
 
-void kscrs_deleteAllReports()
+void sentrycrashcrs_deleteAllReports()
 {
     pthread_mutex_lock(&g_mutex);
-    ksfu_deleteContentsOfPath(g_reportsPath);
+    sentrycrashfu_deleteContentsOfPath(g_reportsPath);
     pthread_mutex_unlock(&g_mutex);
 }
 
-void kscrs_deleteReportWithID(int64_t reportID)
+void sentrycrashcrs_deleteReportWithID(int64_t reportID)
 {
-    char path[KSCRS_MAX_PATH_LENGTH];
+    char path[SentryCrashCRS_MAX_PATH_LENGTH];
     getCrashReportPathByID(reportID, path);
-    ksfu_removeFile(path, true);
+    sentrycrashfu_removeFile(path, true);
 }
 
-void kscrs_setMaxReportCount(int maxReportCount)
+void sentrycrashcrs_setMaxReportCount(int maxReportCount)
 {
     g_maxReportCount = maxReportCount;
 }

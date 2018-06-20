@@ -45,7 +45,7 @@
     // Install the crash handler. This should be done as early as possible.
     // This will record any crashes that occur, but it doesn't automatically send them.
     [installation install];
-    [SentryCrash sharedInstance].deleteBehaviorAfterSendAll = KSCDeleteNever; // TODO: Remove this
+    [SentryCrash sharedInstance].deleteBehaviorAfterSendAll = SentryCrashCDeleteNever; // TODO: Remove this
 
     // Send all outstanding reports. You can do this any time; it doesn't need
     // to happen right as the app launches. Advanced-Example shows how to defer

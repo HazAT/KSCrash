@@ -28,10 +28,10 @@
 #import "SentryCrashReportFilterBasic.h"
 #import "NSError+SimpleConstructor.h"
 #import "Container+DeepSearch.h"
-#import "KSVarArgs.h"
+#import "SentryCrashVarArgs.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 
 @implementation SentryCrashReportFilterPassthrough
@@ -75,16 +75,16 @@
     return self;
 }
 
-+ (KSVA_Block) argBlockWithFilters:(NSMutableArray*) filters andKeys:(NSMutableArray*) keys
++ (SentryCrashVA_Block) argBlockWithFilters:(NSMutableArray*) filters andKeys:(NSMutableArray*) keys
 {
     __block BOOL isKey = FALSE;
-    KSVA_Block block = ^(id entry)
+    SentryCrashVA_Block block = ^(id entry)
     {
         if(isKey)
         {
             if(entry == nil)
             {
-                KSLOG_ERROR(@"key entry was nil");
+                SentryCrashLOG_ERROR(@"key entry was nil");
             }
             else
             {
@@ -99,7 +99,7 @@
             }
             if(![entry conformsToProtocol:@protocol(SentryCrashReportFilter)])
             {
-                KSLOG_ERROR(@"Not a filter: %@", entry);
+                SentryCrashLOG_ERROR(@"Not a filter: %@", entry);
                 // Cause next key entry to fail as well.
                 return;
             }
@@ -117,7 +117,7 @@
 {
     NSMutableArray* filters = [NSMutableArray array];
     NSMutableArray* keys = [NSMutableArray array];
-    ksva_iterate_list(firstFilter, [self argBlockWithFilters:filters andKeys:keys]);
+    sentrycrashva_iterate_list(firstFilter, [self argBlockWithFilters:filters andKeys:keys]);
     return [[self alloc] initWithFilters:filters keys:keys];
 }
 
@@ -125,7 +125,7 @@
 {
     NSMutableArray* filters = [NSMutableArray array];
     NSMutableArray* keys = [NSMutableArray array];
-    ksva_iterate_list(firstFilter, [[self class] argBlockWithFilters:filters andKeys:keys]);
+    sentrycrashva_iterate_list(firstFilter, [[self class] argBlockWithFilters:filters andKeys:keys]);
     return [self initWithFilters:filters keys:keys];
 }
 
@@ -244,13 +244,13 @@
 
 + (SentryCrashReportFilterPipeline*) filterWithFilters:(id) firstFilter, ...
 {
-    ksva_list_to_nsarray(firstFilter, filters);
+    sentrycrashva_list_to_nsarray(firstFilter, filters);
     return [[self alloc] initWithFiltersArray:filters];
 }
 
 - (id) initWithFilters:(id) firstFilter, ...
 {
-    ksva_list_to_nsarray(firstFilter, filters);
+    sentrycrashva_list_to_nsarray(firstFilter, filters);
     return [self initWithFiltersArray:filters];
 }
 
@@ -432,13 +432,13 @@
 
 + (SentryCrashReportFilterConcatenate*) filterWithSeparatorFmt:(NSString*) separatorFmt keys:(id) firstKey, ...
 {
-    ksva_list_to_nsarray(firstKey, keys);
+    sentrycrashva_list_to_nsarray(firstKey, keys);
     return [[self alloc] initWithSeparatorFmt:separatorFmt keysArray:keys];
 }
 
 - (id) initWithSeparatorFmt:(NSString*) separatorFmt keys:(id) firstKey, ...
 {
-    ksva_list_to_nsarray(firstKey, keys);
+    sentrycrashva_list_to_nsarray(firstKey, keys);
     return [self initWithSeparatorFmt:separatorFmt keysArray:keys];
 }
 
@@ -506,13 +506,13 @@
 
 + (SentryCrashReportFilterSubset*) filterWithKeys:(id) firstKeyPath, ...
 {
-    ksva_list_to_nsarray(firstKeyPath, keyPaths);
+    sentrycrashva_list_to_nsarray(firstKeyPath, keyPaths);
     return [[self alloc] initWithKeysArray:keyPaths];
 }
 
 - (id) initWithKeys:(id) firstKeyPath, ...
 {
-    ksva_list_to_nsarray(firstKeyPath, keyPaths);
+    sentrycrashva_list_to_nsarray(firstKeyPath, keyPaths);
     return [self initWithKeysArray:keyPaths];
 }
 

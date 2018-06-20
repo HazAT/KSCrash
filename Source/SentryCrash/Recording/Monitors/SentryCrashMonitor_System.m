@@ -27,19 +27,19 @@
 
 #import "SentryCrashMonitor_System.h"
 
-#import "KSCPU.h"
+#import "SentryCrashCPU.h"
 #import "SentryCrashMonitorContext.h"
-#import "KSDate.h"
-#import "KSDynamicLinker.h"
-#import "KSSysCtl.h"
-#import "KSSystemCapabilities.h"
+#import "SentryCrashDate.h"
+#import "SentryCrashDynamicLinker.h"
+#import "SentryCrashSysCtl.h"
+#import "SentryCrashSystemCapabilities.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 #import <Foundation/Foundation.h>
 #import <CommonCrypto/CommonDigest.h>
-#if KSCRASH_HAS_UIKIT
+#if SentryCrashCRASH_HAS_UIKIT
 #import <UIKit/UIKit.h>
 #endif
 #include <mach/mach.h>
@@ -96,7 +96,7 @@ const char* cString(NSString* str)
 static NSString* nsstringSysctl(NSString* name)
 {
     NSString* str = nil;
-    int size = (int)kssysctl_stringForName(name.UTF8String, NULL, 0);
+    int size = (int)sentrycrashsysctl_stringForName(name.UTF8String, NULL, 0);
 
     if(size <= 0)
     {
@@ -105,7 +105,7 @@ static NSString* nsstringSysctl(NSString* name)
 
     NSMutableData* value = [NSMutableData dataWithLength:(unsigned)size];
 
-    if(kssysctl_stringForName(name.UTF8String, value.mutableBytes, size) != 0)
+    if(sentrycrashsysctl_stringForName(name.UTF8String, value.mutableBytes, size) != 0)
     {
         str = [NSString stringWithCString:value.mutableBytes encoding:NSUTF8StringEncoding];
     }
@@ -121,14 +121,14 @@ static NSString* nsstringSysctl(NSString* name)
  */
 static const char* stringSysctl(const char* name)
 {
-    int size = (int)kssysctl_stringForName(name, NULL, 0);
+    int size = (int)sentrycrashsysctl_stringForName(name, NULL, 0);
     if(size <= 0)
     {
         return NULL;
     }
 
     char* value = malloc((size_t)size);
-    if(kssysctl_stringForName(name, value, size) <= 0)
+    if(sentrycrashsysctl_stringForName(name, value, size) <= 0)
     {
         free(value);
         return NULL;
@@ -140,7 +140,7 @@ static const char* stringSysctl(const char* name)
 static const char* dateString(time_t date)
 {
     char* buffer = malloc(21);
-    ksdate_utcStringFromTimestamp(date, buffer);
+    sentrycrashdate_utcStringFromTimestamp(date, buffer);
     return buffer;
 }
 
@@ -152,7 +152,7 @@ static const char* dateString(time_t date)
  */
 static const char* dateSysctl(const char* name)
 {
-    struct timeval value = kssysctl_timevalForName(name);
+    struct timeval value = sentrycrashsysctl_timevalForName(name);
     return dateString(value.tv_sec);
 }
 
@@ -171,7 +171,7 @@ static bool VMStats(vm_statistics_data_t* const vmStats, vm_size_t* const pageSi
 
     if((kr = host_page_size(hostPort, pageSize)) != KERN_SUCCESS)
     {
-        KSLOG_ERROR(@"host_page_size: %s", mach_error_string(kr));
+        SentryCrashLOG_ERROR(@"host_page_size: %s", mach_error_string(kr));
         return false;
     }
 
@@ -182,7 +182,7 @@ static bool VMStats(vm_statistics_data_t* const vmStats, vm_size_t* const pageSi
                          &hostSize);
     if(kr != KERN_SUCCESS)
     {
-        KSLOG_ERROR(@"host_statistics: %s", mach_error_string(kr));
+        SentryCrashLOG_ERROR(@"host_statistics: %s", mach_error_string(kr));
         return false;
     }
 
@@ -254,11 +254,11 @@ static const char* getAppUUID()
 
     if(exePath != nil)
     {
-        const uint8_t* uuidBytes = ksdl_imageUUID(exePath.UTF8String, true);
+        const uint8_t* uuidBytes = sentrycrashdl_imageUUID(exePath.UTF8String, true);
         if(uuidBytes == NULL)
         {
             // OSX app image path is a lie.
-            uuidBytes = ksdl_imageUUID(exePath.lastPathComponent.UTF8String, false);
+            uuidBytes = sentrycrashdl_imageUUID(exePath.lastPathComponent.UTF8String, false);
         }
         if(uuidBytes != NULL)
         {
@@ -307,12 +307,12 @@ static const char* getCPUArchForCPUType(cpu_type_t cpuType, cpu_subtype_t subTyp
 
 static const char* getCurrentCPUArch()
 {
-    const char* result = getCPUArchForCPUType(kssysctl_int32ForName("hw.cputype"),
-                                            kssysctl_int32ForName("hw.cpusubtype"));
+    const char* result = getCPUArchForCPUType(sentrycrashsysctl_int32ForName("hw.cputype"),
+                                            sentrycrashsysctl_int32ForName("hw.cpusubtype"));
 
     if(result == NULL)
     {
-        result = kscpu_currentArch();
+        result = sentrycrashcpu_currentArch();
     }
     return result;
 }
@@ -323,7 +323,7 @@ static const char* getCurrentCPUArch()
  */
 static bool isJailbroken()
 {
-    return ksdl_imageNamed("MobileSubstrate", false) != UINT32_MAX;
+    return sentrycrashdl_imageNamed("MobileSubstrate", false) != UINT32_MAX;
 }
 
 /** Check if the current build is a debug build.
@@ -359,7 +359,7 @@ static bool isSimulatorBuild()
 static NSString* getReceiptUrlPath()
 {
     NSString* path = nil;
-#if KSCRASH_HOST_IOS
+#if SentryCrashCRASH_HOST_IOS
     // For iOS 6 compatibility
 #ifdef __IPHONE_11_0
     if (@available(iOS 7, *)) {
@@ -368,7 +368,7 @@ static NSString* getReceiptUrlPath()
 #endif
 #endif
         path = [NSBundle mainBundle].appStoreReceiptURL.path;
-#if KSCRASH_HOST_IOS
+#if SentryCrashCRASH_HOST_IOS
     }
 #endif
     return path;
@@ -384,7 +384,7 @@ static const char* getDeviceAndAppHash()
 {
     NSMutableData* data = nil;
 
-#if KSCRASH_HAS_UIDEVICE
+#if SentryCrashCRASH_HAS_UIDEVICE
     if([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)])
     {
         data = [NSMutableData dataWithLength:16];
@@ -394,7 +394,7 @@ static const char* getDeviceAndAppHash()
 #endif
     {
         data = [NSMutableData dataWithLength:6];
-        kssysctl_getMacAddress("en0", [data mutableBytes]);
+        sentrycrashsysctl_getMacAddress("en0", [data mutableBytes]);
     }
 
     // Append some device-specific data.
@@ -493,14 +493,14 @@ static void initialize()
         NSDictionary* infoDict = [mainBundle infoDictionary];
         const struct mach_header* header = _dyld_get_image_header(0);
 
-#if KSCRASH_HAS_UIDEVICE
+#if SentryCrashCRASH_HAS_UIDEVICE
         g_systemData.systemName = cString([UIDevice currentDevice].systemName);
         g_systemData.systemVersion = cString([UIDevice currentDevice].systemVersion);
 #else
-#if KSCRASH_HOST_MAC
+#if SentryCrashCRASH_HOST_MAC
         g_systemData.systemName = "macOS";
 #endif
-#if KSCRASH_HOST_WATCH
+#if SentryCrashCRASH_HOST_WATCH
         g_systemData.systemName = "watchOS";
 #endif
         NSOperatingSystemVersion version = {0, 0, 0};
@@ -526,7 +526,7 @@ static void initialize()
         }
         else
         {
-#if KSCRASH_HOST_MAC
+#if SentryCrashCRASH_HOST_MAC
             // MacOS has the machine in the model field, and no model
             g_systemData.machine = stringSysctl("hw.model");
 #else
@@ -548,8 +548,8 @@ static void initialize()
         g_systemData.bundleShortVersion = cString(infoDict[@"CFBundleShortVersionString"]);
         g_systemData.appID = getAppUUID();
         g_systemData.cpuArchitecture = getCurrentCPUArch();
-        g_systemData.cpuType = kssysctl_int32ForName("hw.cputype");
-        g_systemData.cpuSubType = kssysctl_int32ForName("hw.cpusubtype");
+        g_systemData.cpuType = sentrycrashsysctl_int32ForName("hw.cputype");
+        g_systemData.cpuSubType = sentrycrashsysctl_int32ForName("hw.cpusubtype");
         g_systemData.binaryCPUType = header->cputype;
         g_systemData.binaryCPUSubType = header->cpusubtype;
         g_systemData.timezone = cString([NSTimeZone localTimeZone].abbreviation);
@@ -559,7 +559,7 @@ static void initialize()
         g_systemData.deviceAppHash = getDeviceAndAppHash();
         g_systemData.buildType = getBuildType();
         g_systemData.storageSize = getStorageSize();
-        g_systemData.memorySize = kssysctl_uint64ForName("hw.memsize");
+        g_systemData.memorySize = sentrycrashsysctl_uint64ForName("hw.memsize");
     }
 }
 
@@ -619,7 +619,7 @@ static void addContextualInfoToEvent(SentryCrash_MonitorContext* eventContext)
     }
 }
 
-SentryCrashMonitorAPI* kscm_system_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_system_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

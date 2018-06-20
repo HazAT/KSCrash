@@ -18,79 +18,79 @@ Crashes
 
 ### Abort
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/Abort.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/Abort.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/Abort.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/Abort.json)
 
 Caused when the app calls abort().
 
 
 ### Bad Pointer
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/BadPointer.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/BadPointer.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/BadPointer.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/BadPointer.json)
 
 Caused when the app tries to access memory it doesn't have access to. This usually occurs when you have a dangling pointer.
 
 
 ### Corrupt Memory
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/CorruptMemory.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/CorruptMemory.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/CorruptMemory.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/CorruptMemory.json)
 
 Caused when the app incorrectly overwrites memory. This usually happens if you run off the end of an array. The crash doctor can often recognize this situation.
 
 
 ### Corrupt Object
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/CorruptObject.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/CorruptObject.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/CorruptObject.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/CorruptObject.json)
 
 Caused when an object's memory has been corrupted. It's similar to corrupt memory, but if enough of the object remains intact, it can confuse the Objective-C runtime.
 
 
 ### Crash in Handler
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/CrashInHandler.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/CrashInHandler.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/CrashInHandler.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/CrashInHandler.json)
 
 Caused if SentryCrash itself crashes, or if your custom crash handler function crashes. In such a case, it will attempt to recover as much information from the original crash as possible, and will also record where the recrash occurred.
 
 
 ### Deadlock
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/MainThreadDeadlock.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/MainThreadDeadlock.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/MainThreadDeadlock.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/MainThreadDeadlock.json)
 
 Caused if the main thread was locked for too long. SentryCrash includes an optional watchdog service that monitors the main thread and shuts down the app if the thread remains locked beyond an acceptable period.
 
 
 ### NSException
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/NSException.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/NSException.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/NSException.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/NSException.json)
 
 Caused when the app throws an Objective-C exception. If the exception description includes a pointer value, SentryCrash will attempt to introspect its contents.
 
 
 ### Stack Overflow
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/StackOverflow.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/StackOverflow.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/StackOverflow.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/StackOverflow.json)
 
 Caused when the application runs out of stack space. Usually this happens if you make a recursive call that never terminates.
 
 
 ### Zombie
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/Zombie.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/Zombie.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/Zombie.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/Zombie.json)
 
 Caused when you attempt to access a deallocated object. SentryCrash will reconstruct the Objective-C call that was attempted on the deallocated object (shown in the CrashDoctor diagnosis).
 
 
 ### Zombie NSException
 
-[Apple-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/ZombieNSException.txt)
-[JSON-Style](https://github.com/kstenerud/SentryCrash/raw/master/Example-Reports/ZombieNSException.json)
+[Apple-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/ZombieNSException.txt)
+[JSON-Style](https://github.com/sentrycrashtenerud/SentryCrash/raw/master/Example-Reports/ZombieNSException.json)
 
 In some cases due to memory corruption, an NSException can be prematurely deallocated, in which case you'd lose the cause of the original crash. SentryCrash records exceptions when they are deallocated so that it can recover this information.

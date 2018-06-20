@@ -42,7 +42,7 @@ extern "C" {
 
 /** Access the Monitor API.
  */
-SentryCrashMonitorAPI* kscm_nsexception_getAPI(void);
+SentryCrashMonitorAPI* sentrycrashcm_nsexception_getAPI(void);
 
 
 #ifdef __cplusplus

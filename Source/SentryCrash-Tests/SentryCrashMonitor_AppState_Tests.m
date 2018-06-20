@@ -40,8 +40,8 @@
 {
     NSString* stateFile = [self.tempPath stringByAppendingPathComponent:@"state.json"];
     sentrycrashstate_initialize([stateFile cStringUsingEncoding:NSUTF8StringEncoding]);
-    kscm_setActiveMonitors(SentryCrashMonitorTypeNone);
-    kscm_setActiveMonitors(SentryCrashMonitorTypeApplicationState);
+    sentrycrashcm_setActiveMonitors(SentryCrashMonitorTypeNone);
+    sentrycrashcm_setActiveMonitors(SentryCrashMonitorTypeApplicationState);
 }
 
 - (void) testInitRelaunch

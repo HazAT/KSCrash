@@ -25,14 +25,14 @@
 //
 
 #include "SentryCrashReportFields.h"
-#include "KSSystemCapabilities.h"
-#include "KSJSONCodec.h"
-#include "KSDemangle_CPP.h"
-#if KSCRASH_HAS_SWIFT
-#include "KSDemangle_Swift.h"
+#include "SentryCrashSystemCapabilities.h"
+#include "SentryCrashJSONCodec.h"
+#include "SentryCrashDemangle_CPP.h"
+#if SentryCrashCRASH_HAS_SWIFT
+#include "SentryCrashDemangle_Swift.h"
 #endif
-#include "KSDate.h"
-#include "KSLogger.h"
+#include "SentryCrashDate.h"
+#include "SentryCrashLogger.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -58,7 +58,7 @@ static int demanglePathsCount = sizeof(demanglePaths) / sizeof(*demanglePaths);
 
 typedef struct
 {
-    KSJSONEncodeContext* encodeContext;
+    SentryCrashJSONEncodeContext* encodeContext;
     char objectPath[MAX_DEPTH][MAX_NAME_LENGTH];
     int currentDepth;
     char* outputPtr;
@@ -141,7 +141,7 @@ static int onBooleanElement(const char* const name,
                             void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    return ksjson_addBooleanElement(context->encodeContext, name, value);
+    return sentrycrashjson_addBooleanElement(context->encodeContext, name, value);
 }
 
 static int onFloatingPointElement(const char* const name,
@@ -149,7 +149,7 @@ static int onFloatingPointElement(const char* const name,
                                   void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    return ksjson_addFloatingPointElement(context->encodeContext, name, value);
+    return sentrycrashjson_addFloatingPointElement(context->encodeContext, name, value);
 }
 
 static int onIntegerElement(const char* const name,
@@ -157,17 +157,17 @@ static int onIntegerElement(const char* const name,
                             void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    int result = KSJSON_OK;
+    int result = SentryCrashJSON_OK;
     if(shouldFixDate(context, name))
     {
         char buffer[21];
-        ksdate_utcStringFromTimestamp((time_t)value, buffer);
+        sentrycrashdate_utcStringFromTimestamp((time_t)value, buffer);
 
-        result = ksjson_addStringElement(context->encodeContext, name, buffer, (int)strlen(buffer));
+        result = sentrycrashjson_addStringElement(context->encodeContext, name, buffer, (int)strlen(buffer));
     }
     else
     {
-        result = ksjson_addIntegerElement(context->encodeContext, name, value);
+        result = sentrycrashjson_addIntegerElement(context->encodeContext, name, value);
     }
     return result;
 }
@@ -176,7 +176,7 @@ static int onNullElement(const char* const name,
                          void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    return ksjson_addNullElement(context->encodeContext, name);
+    return sentrycrashjson_addNullElement(context->encodeContext, name);
 }
 
 static int onStringElement(const char* const name,
@@ -188,11 +188,11 @@ static int onStringElement(const char* const name,
     char* demangled = NULL;
     if(shouldDemangle(context, name))
     {
-        demangled = ksdm_demangleCPP(value);
-#if KSCRASH_HAS_SWIFT
+        demangled = sentrycrashdm_demangleCPP(value);
+#if SentryCrashCRASH_HAS_SWIFT
         if(demangled == NULL)
         {
-            demangled = ksdm_demangleSwift(value);
+            demangled = sentrycrashdm_demangleSwift(value);
         }
 #endif
         if(demangled != NULL)
@@ -200,7 +200,7 @@ static int onStringElement(const char* const name,
             stringValue = demangled;
         }
     }
-    int result = ksjson_addStringElement(context->encodeContext, name, stringValue, (int)strlen(stringValue));
+    int result = sentrycrashjson_addStringElement(context->encodeContext, name, stringValue, (int)strlen(stringValue));
     if(demangled != NULL)
     {
         free(demangled);
@@ -212,10 +212,10 @@ static int onBeginObject(const char* const name,
                          void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    int result = ksjson_beginObject(context->encodeContext, name);
+    int result = sentrycrashjson_beginObject(context->encodeContext, name);
     if(!increaseDepth(context, name))
     {
-        return KSJSON_ERROR_DATA_TOO_LONG;
+        return SentryCrashJSON_ERROR_DATA_TOO_LONG;
     }
     return result;
 }
@@ -224,10 +224,10 @@ static int onBeginArray(const char* const name,
                         void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    int result = ksjson_beginArray(context->encodeContext, name);
+    int result = sentrycrashjson_beginArray(context->encodeContext, name);
     if(!increaseDepth(context, name))
     {
-        return KSJSON_ERROR_DATA_TOO_LONG;
+        return SentryCrashJSON_ERROR_DATA_TOO_LONG;
     }
     return result;
 }
@@ -235,7 +235,7 @@ static int onBeginArray(const char* const name,
 static int onEndContainer(void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    int result = ksjson_endContainer(context->encodeContext);
+    int result = sentrycrashjson_endContainer(context->encodeContext);
     if(!decreaseDepth(context))
     {
         // Do something;
@@ -246,7 +246,7 @@ static int onEndContainer(void* const userData)
 static int onEndData(__unused void* const userData)
 {
     FixupContext* context = (FixupContext*)userData;
-    return ksjson_endEncode(context->encodeContext);
+    return sentrycrashjson_endEncode(context->encodeContext);
 }
 
 static int addJSONData(const char* data, int length, void* userData)
@@ -254,23 +254,23 @@ static int addJSONData(const char* data, int length, void* userData)
     FixupContext* context = (FixupContext*)userData;
     if(length > context->outputBytesLeft)
     {
-        return KSJSON_ERROR_DATA_TOO_LONG;
+        return SentryCrashJSON_ERROR_DATA_TOO_LONG;
     }
     memcpy(context->outputPtr, data, length);
     context->outputPtr += length;
     context->outputBytesLeft -= length;
 
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
-char* kscrf_fixupCrashReport(const char* crashReport)
+char* sentrycrashcrf_fixupCrashReport(const char* crashReport)
 {
     if(crashReport == NULL)
     {
         return NULL;
     }
 
-    KSJSONDecodeCallbacks callbacks =
+    SentryCrashJSONDecodeCallbacks callbacks =
     {
         .onBeginArray = onBeginArray,
         .onBeginObject = onBeginObject,
@@ -287,7 +287,7 @@ char* kscrf_fixupCrashReport(const char* crashReport)
     int crashReportLength = (int)strlen(crashReport);
     int fixedReportLength = (int)(crashReportLength * 1.5);
     char* fixedReport = malloc((unsigned)fixedReportLength);
-    KSJSONEncodeContext encodeContext;
+    SentryCrashJSONEncodeContext encodeContext;
     FixupContext fixupContext =
     {
         .encodeContext = &encodeContext,
@@ -296,15 +296,15 @@ char* kscrf_fixupCrashReport(const char* crashReport)
         .outputBytesLeft = fixedReportLength,
     };
 
-    ksjson_beginEncode(&encodeContext, true, addJSONData, &fixupContext);
+    sentrycrashjson_beginEncode(&encodeContext, true, addJSONData, &fixupContext);
 
     int errorOffset = 0;
-    int result = ksjson_decode(crashReport, (int)strlen(crashReport), stringBuffer, stringBufferLength, &callbacks, &fixupContext, &errorOffset);
+    int result = sentrycrashjson_decode(crashReport, (int)strlen(crashReport), stringBuffer, stringBufferLength, &callbacks, &fixupContext, &errorOffset);
     *fixupContext.outputPtr = '\0';
     free(stringBuffer);
-    if(result != KSJSON_OK)
+    if(result != SentryCrashJSON_OK)
     {
-        KSLOG_ERROR("Could not decode report: %s", ksjson_stringForError(result));
+        SentryCrashLOG_ERROR("Could not decode report: %s", sentrycrashjson_stringForError(result));
         free(fixedReport);
         return NULL;
     }

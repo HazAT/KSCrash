@@ -46,11 +46,11 @@ extern "C" {
  *
  * @param value The number of seconds between checks (0 = disabled).
  */
-void kscm_setDeadlockHandlerWatchdogInterval(double value);
+void sentrycrashcm_setDeadlockHandlerWatchdogInterval(double value);
 
 /** Access the Monitor API.
  */
-SentryCrashMonitorAPI* kscm_deadlock_getAPI(void);
+SentryCrashMonitorAPI* sentrycrashcm_deadlock_getAPI(void);
 
 
 #ifdef __cplusplus

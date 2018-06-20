@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 #include "SentryCrashMonitorType.h"
-#include "KSMachineContext.h"
+#include "SentryCrashMachineContext.h"
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -67,7 +67,7 @@ typedef struct SentryCrash_MonitorContext
     bool isStackOverflow;
 
     /** The machine context that generated the event. */
-    struct KSMachineContext* offendingMachineContext;
+    struct SentryCrashMachineContext* offendingMachineContext;
 
     /** Address that caused the fault. */
     uintptr_t faultAddress;
@@ -83,7 +83,7 @@ typedef struct SentryCrash_MonitorContext
     const char* crashReason;
 
     /** The stack cursor for the trace leading up to the crash.
-     *  Note: Actual type is KSStackCursor*
+     *  Note: Actual type is SentryCrashStackCursor*
      */
     void* stackCursor;
 

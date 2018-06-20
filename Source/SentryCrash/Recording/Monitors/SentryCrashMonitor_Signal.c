@@ -26,16 +26,16 @@
 
 #include "SentryCrashMonitor_Signal.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSID.h"
-#include "KSSignalInfo.h"
-#include "KSMachineContext.h"
-#include "KSSystemCapabilities.h"
-#include "KSStackCursor_MachineContext.h"
+#include "SentryCrashID.h"
+#include "SentryCrashSignalInfo.h"
+#include "SentryCrashMachineContext.h"
+#include "SentryCrashSystemCapabilities.h"
+#include "SentryCrashStackCursor_MachineContext.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
-#if KSCRASH_HAS_SIGNAL
+#if SentryCrashCRASH_HAS_SIGNAL
 
 #include <errno.h>
 #include <signal.h>
@@ -51,9 +51,9 @@
 static volatile bool g_isEnabled = false;
 
 static SentryCrash_MonitorContext g_monitorContext;
-static KSStackCursor g_stackCursor;
+static SentryCrashStackCursor g_stackCursor;
 
-#if KSCRASH_HAS_SIGNAL_STACK
+#if SentryCrashCRASH_HAS_SIGNAL_STACK
 /** Our custom signal stack. The signal handler will use this as its stack. */
 static stack_t g_signalStack = {0};
 #endif
@@ -81,16 +81,16 @@ static char g_eventID[37];
  */
 static void handleSignal(int sigNum, siginfo_t* signalInfo, void* userContext)
 {
-    KSLOG_DEBUG("Trapped signal %d", sigNum);
+    SentryCrashLOG_DEBUG("Trapped signal %d", sigNum);
     if(g_isEnabled)
     {
-        ksmc_suspendEnvironment();
-        kscm_notifyFatalExceptionCaptured(false);
+        sentrycrashmc_suspendEnvironment();
+        sentrycrashcm_notifyFatalExceptionCaptured(false);
 
-        KSLOG_DEBUG("Filling out context.");
-        KSMC_NEW_CONTEXT(machineContext);
-        ksmc_getContextForSignal(userContext, machineContext);
-        kssc_initWithMachineContext(&g_stackCursor, 100, machineContext);
+        SentryCrashLOG_DEBUG("Filling out context.");
+        SentryCrashMC_NEW_CONTEXT(machineContext);
+        sentrycrashmc_getContextForSignal(userContext, machineContext);
+        sentrycrashsc_initWithMachineContext(&g_stackCursor, 100, machineContext);
 
         SentryCrash_MonitorContext* crashContext = &g_monitorContext;
         memset(crashContext, 0, sizeof(*crashContext));
@@ -104,11 +104,11 @@ static void handleSignal(int sigNum, siginfo_t* signalInfo, void* userContext)
         crashContext->signal.sigcode = signalInfo->si_code;
         crashContext->stackCursor = &g_stackCursor;
 
-        kscm_handleException(crashContext);
-        ksmc_resumeEnvironment();
+        sentrycrashcm_handleException(crashContext);
+        sentrycrashmc_resumeEnvironment();
     }
 
-    KSLOG_DEBUG("Re-raising signal for regular handlers to catch.");
+    SentryCrashLOG_DEBUG("Re-raising signal for regular handlers to catch.");
     // This is technically not allowed, but it works in OSX and iOS.
     raise(sigNum);
 }
@@ -120,38 +120,38 @@ static void handleSignal(int sigNum, siginfo_t* signalInfo, void* userContext)
 
 static bool installSignalHandler()
 {
-    KSLOG_DEBUG("Installing signal handler.");
+    SentryCrashLOG_DEBUG("Installing signal handler.");
 
-#if KSCRASH_HAS_SIGNAL_STACK
+#if SentryCrashCRASH_HAS_SIGNAL_STACK
 
     if(g_signalStack.ss_size == 0)
     {
-        KSLOG_DEBUG("Allocating signal stack area.");
+        SentryCrashLOG_DEBUG("Allocating signal stack area.");
         g_signalStack.ss_size = SIGSTKSZ;
         g_signalStack.ss_sp = malloc(g_signalStack.ss_size);
     }
 
-    KSLOG_DEBUG("Setting signal stack area.");
+    SentryCrashLOG_DEBUG("Setting signal stack area.");
     if(sigaltstack(&g_signalStack, NULL) != 0)
     {
-        KSLOG_ERROR("signalstack: %s", strerror(errno));
+        SentryCrashLOG_ERROR("signalstack: %s", strerror(errno));
         goto failed;
     }
 #endif
 
-    const int* fatalSignals = kssignal_fatalSignals();
-    int fatalSignalsCount = kssignal_numFatalSignals();
+    const int* fatalSignals = sentrycrashsignal_fatalSignals();
+    int fatalSignalsCount = sentrycrashsignal_numFatalSignals();
 
     if(g_previousSignalHandlers == NULL)
     {
-        KSLOG_DEBUG("Allocating memory to store previous signal handlers.");
+        SentryCrashLOG_DEBUG("Allocating memory to store previous signal handlers.");
         g_previousSignalHandlers = malloc(sizeof(*g_previousSignalHandlers)
                                           * (unsigned)fatalSignalsCount);
     }
 
     struct sigaction action = {{0}};
     action.sa_flags = SA_SIGINFO | SA_ONSTACK;
-#if KSCRASH_HOST_APPLE && defined(__LP64__)
+#if SentryCrashCRASH_HOST_APPLE && defined(__LP64__)
     action.sa_flags |= SA_64REGSET;
 #endif
     sigemptyset(&action.sa_mask);
@@ -159,17 +159,17 @@ static bool installSignalHandler()
 
     for(int i = 0; i < fatalSignalsCount; i++)
     {
-        KSLOG_DEBUG("Assigning handler for signal %d", fatalSignals[i]);
+        SentryCrashLOG_DEBUG("Assigning handler for signal %d", fatalSignals[i]);
         if(sigaction(fatalSignals[i], &action, &g_previousSignalHandlers[i]) != 0)
         {
             char sigNameBuff[30];
-            const char* sigName = kssignal_signalName(fatalSignals[i]);
+            const char* sigName = sentrycrashsignal_signalName(fatalSignals[i]);
             if(sigName == NULL)
             {
                 snprintf(sigNameBuff, sizeof(sigNameBuff), "%d", fatalSignals[i]);
                 sigName = sigNameBuff;
             }
-            KSLOG_ERROR("sigaction (%s): %s", sigName, strerror(errno));
+            SentryCrashLOG_ERROR("sigaction (%s): %s", sigName, strerror(errno));
             // Try to reverse the damage
             for(i--;i >= 0; i--)
             {
@@ -178,31 +178,31 @@ static bool installSignalHandler()
             goto failed;
         }
     }
-    KSLOG_DEBUG("Signal handlers installed.");
+    SentryCrashLOG_DEBUG("Signal handlers installed.");
     return true;
 
 failed:
-    KSLOG_DEBUG("Failed to install signal handlers.");
+    SentryCrashLOG_DEBUG("Failed to install signal handlers.");
     return false;
 }
 
 static void uninstallSignalHandler(void)
 {
-    KSLOG_DEBUG("Uninstalling signal handlers.");
+    SentryCrashLOG_DEBUG("Uninstalling signal handlers.");
 
-    const int* fatalSignals = kssignal_fatalSignals();
-    int fatalSignalsCount = kssignal_numFatalSignals();
+    const int* fatalSignals = sentrycrashsignal_fatalSignals();
+    int fatalSignalsCount = sentrycrashsignal_numFatalSignals();
 
     for(int i = 0; i < fatalSignalsCount; i++)
     {
-        KSLOG_DEBUG("Restoring original handler for signal %d", fatalSignals[i]);
+        SentryCrashLOG_DEBUG("Restoring original handler for signal %d", fatalSignals[i]);
         sigaction(fatalSignals[i], &g_previousSignalHandlers[i], NULL);
     }
 
-#if KSCRASH_HAS_SIGNAL_STACK
+#if SentryCrashCRASH_HAS_SIGNAL_STACK
     g_signalStack = (stack_t){0};
 #endif
-    KSLOG_DEBUG("Signal handlers uninstalled.");
+    SentryCrashLOG_DEBUG("Signal handlers uninstalled.");
 }
 
 static void setEnabled(bool isEnabled)
@@ -212,7 +212,7 @@ static void setEnabled(bool isEnabled)
         g_isEnabled = isEnabled;
         if(isEnabled)
         {
-            ksid_generate(g_eventID);
+            sentrycrashid_generate(g_eventID);
             if(!installSignalHandler())
             {
                 return;
@@ -240,11 +240,11 @@ static void addContextualInfoToEvent(struct SentryCrash_MonitorContext* eventCon
 
 #endif
 
-SentryCrashMonitorAPI* kscm_signal_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_signal_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {
-#if KSCRASH_HAS_SIGNAL
+#if SentryCrashCRASH_HAS_SIGNAL
         .setEnabled = setEnabled,
         .isEnabled = isEnabled,
         .addContextualInfoToEvent = addContextualInfoToEvent

@@ -2434,7 +2434,7 @@
                         {
                             "object_name": "Crash-Tester",
                             "object_addr": 929792,
-                            "symbol_name": "ksmachexc_i_handleExceptions",
+                            "symbol_name": "sentrycrashmachexc_i_handleExceptions",
                             "symbol_addr": 1104848,
                             "instruction_addr": 1105081
                         },
@@ -2500,7 +2500,7 @@
                         {
                             "object_name": "Crash-Tester",
                             "object_addr": 929792,
-                            "symbol_name": "ksmachexc_i_handleExceptions",
+                            "symbol_name": "sentrycrashmachexc_i_handleExceptions",
                             "symbol_addr": 1104848,
                             "instruction_addr": 1105192
                         },

@@ -3,14 +3,14 @@ Pod::Spec.new do |s|
   s.name         = "SentryCrash"
   s.version      = "1.15.18"
   s.summary      = "The Ultimate iOS Crash Reporter"
-  s.homepage     = "https://github.com/kstenerud/SentryCrash"
+  s.homepage     = "https://github.com/sentrycrashtenerud/SentryCrash"
   s.license     = { :type => 'SentryCrash license agreement', :file => 'LICENSE' }
-  s.author       = { "Karl Stenerud" => "kstenerud@gmail.com" }
+  s.author       = { "Karl Stenerud" => "sentrycrashtenerud@gmail.com" }
   s.ios.deployment_target =  IOS_DEPLOYMENT_TARGET
   s.osx.deployment_target =  '10.8'
   s.tvos.deployment_target =  '9.0'
   s.watchos.deployment_target =  '2.0'
-  s.source       = { :git => "https://github.com/kstenerud/SentryCrash.git", :tag=>s.version.to_s }
+  s.source       = { :git => "https://github.com/sentrycrashtenerud/SentryCrash.git", :tag=>s.version.to_s }
   s.frameworks = 'Foundation'
   s.libraries = 'c++', 'z'
   s.xcconfig = { 'GCC_ENABLE_CPP_EXCEPTIONS' => 'YES' }
@@ -102,7 +102,7 @@ Pod::Spec.new do |s|
       tools.tvos.frameworks = 'SystemConfiguration'
       tools.osx.frameworks = 'SystemConfiguration'
       tools.source_files = 'Source/SentryCrash/Reporting/Tools/**/*.{h,m,mm,c,cpp}',
-                           'Source/SentryCrash/Recording/KSSystemCapabilities.h'
+                           'Source/SentryCrash/Recording/SentryCrashSystemCapabilities.h'
     end
 
     reporting.subspec 'MessageUI' do |messageui|
@@ -128,7 +128,7 @@ Pod::Spec.new do |s|
     core.source_files = 'Source/SentryCrash/Installations/SentryCrashInstallation.h',
                         'Source/SentryCrash/Installations/SentryCrashInstallation.m',
                         'Source/SentryCrash/Installations/SentryCrashInstallation+Private.h',
-                        'Source/SentryCrash/Reporting/Tools/KSCString.{h,m}'
+                        'Source/SentryCrash/Reporting/Tools/SentryCrashCString.{h,m}'
   end
 
 end

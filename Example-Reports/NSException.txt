@@ -79,13 +79,13 @@ Thread 6 name:  SentryCrash Exception Handler (Secondary)
 Thread 6:
 0   libsystem_kernel.dylib          0x3618bc00 0x3617c000 + 64512 (mach_msg_trap + 20)
 1   libsystem_kernel.dylib          0x36188b70 0x3617c000 + 52080 (thread_suspend + 40)
-2   Crash-Tester                    0x00034cb8 0x8000 + 183480 (ksmachexc_i_handleExceptions + 112)
+2   Crash-Tester                    0x00034cb8 0x8000 + 183480 (sentrycrashmachexc_i_handleExceptions + 112)
 3   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
 Thread 7 name:  SentryCrash Exception Handler (Primary)
 Thread 7:
 0   libsystem_kernel.dylib          0x3618bc00 0x3617c000 + 64512 (mach_msg_trap + 20)
-1   Crash-Tester                    0x00034d00 0x8000 + 183552 (ksmachexc_i_handleExceptions + 184)
+1   Crash-Tester                    0x00034d00 0x8000 + 183552 (sentrycrashmachexc_i_handleExceptions + 184)
 2   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
 Thread 0 crashed with ARM Thread State:

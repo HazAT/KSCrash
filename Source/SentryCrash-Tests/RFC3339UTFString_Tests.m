@@ -24,7 +24,7 @@
 
 
 #import <XCTest/XCTest.h>
-#import "KSDate.h"
+#import "SentryCrashDate.h"
 
 
 @interface RFC3339DateTool_Tests : XCTestCase @end
@@ -33,7 +33,7 @@ NSString* stringFromDate(NSDate* date)
 {
     char string[21];
     time_t timestamp = (time_t)date.timeIntervalSince1970;
-    ksdate_utcStringFromTimestamp(timestamp, string);
+    sentrycrashdate_utcStringFromTimestamp(timestamp, string);
     return [NSString stringWithUTF8String:string];
 }
 
@@ -68,4 +68,3 @@ NSString* stringFromDate(NSDate* date)
 }
 
 @end
-

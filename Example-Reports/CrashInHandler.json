@@ -1743,7 +1743,7 @@
                             "object_addr": 163840,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 347136,
-                            "symbol_name": "ksmachexc_i_handleExceptions"
+                            "symbol_name": "sentrycrashmachexc_i_handleExceptions"
                         },
                         {
                             "instruction_addr": 908477200,
@@ -1829,7 +1829,7 @@
                             "object_addr": 163840,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 345528,
-                            "symbol_name": "kscrw_i_callUserCrashHandler"
+                            "symbol_name": "sentrycrashcrw_i_callUserCrashHandler"
                         },
                         {
                             "instruction_addr": 346632,
@@ -1850,7 +1850,7 @@
                             "object_addr": 163840,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 347136,
-                            "symbol_name": "ksmachexc_i_handleExceptions"
+                            "symbol_name": "sentrycrashmachexc_i_handleExceptions"
                         },
                         {
                             "instruction_addr": 908477200,

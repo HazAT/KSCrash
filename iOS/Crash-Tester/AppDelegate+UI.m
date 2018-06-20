@@ -296,7 +296,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
     NSMutableArray* commands = [NSMutableArray array];
 
     [commands addObject:
-     [CommandEntry commandWithName:@"Send to KS"
+     [CommandEntry commandWithName:@"Send to SentryCrash"
                      accessoryType:UITableViewCellAccessoryNone
                              block:^(UIViewController* controller)
       {

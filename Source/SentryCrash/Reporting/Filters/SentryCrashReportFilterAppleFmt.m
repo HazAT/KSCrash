@@ -32,7 +32,7 @@
 #import <mach/machine.h>
 
 #import "SentryCrashReportFields.h"
-#import "KSJSONCodecObjC.h"
+#import "SentryCrashJSONCodecObjC.h"
 #import "SentryCrashMonitor_System.h"
 
 
@@ -59,7 +59,7 @@
 
 @interface SentryCrashReportFilterAppleFmt ()
 
-@property(nonatomic,readwrite,assign) KSAppleReportStyle reportStyle;
+@property(nonatomic,readwrite,assign) SentryCrashAppleReportStyle reportStyle;
 
 /** Convert a crash report to Apple format.
  *
@@ -161,12 +161,12 @@ static NSDictionary* g_registerOrders;
                         nil];
 }
 
-+ (SentryCrashReportFilterAppleFmt*) filterWithReportStyle:(KSAppleReportStyle) reportStyle
++ (SentryCrashReportFilterAppleFmt*) filterWithReportStyle:(SentryCrashAppleReportStyle) reportStyle
 {
     return [[self alloc] initWithReportStyle:reportStyle];
 }
 
-- (id) initWithReportStyle:(KSAppleReportStyle) reportStyle
+- (id) initWithReportStyle:(SentryCrashAppleReportStyle) reportStyle
 {
     if((self = [super init]))
     {
@@ -278,7 +278,7 @@ static NSDictionary* g_registerOrders;
  * @return The converted string.
  */
 - (NSString*) backtraceString:(NSDictionary*) backtrace
-                  reportStyle:(KSAppleReportStyle) reportStyle
+                  reportStyle:(SentryCrashAppleReportStyle) reportStyle
            mainExecutableName:(NSString*) mainExecutableName
 {
     NSMutableString* str = [NSMutableString string];
@@ -292,44 +292,44 @@ static NSDictionary* g_registerOrders;
         uintptr_t symAddr = (uintptr_t)[[trace objectForKey:@SentryCrashField_SymbolAddr] longLongValue];
         NSString* symName = [trace objectForKey:@SentryCrashField_SymbolName];
         bool isMainExecutable = mainExecutableName && [objName isEqualToString:mainExecutableName];
-        KSAppleReportStyle thisLineStyle = reportStyle;
-        if(thisLineStyle == KSAppleReportStylePartiallySymbolicated)
+        SentryCrashAppleReportStyle thisLineStyle = reportStyle;
+        if(thisLineStyle == SentryCrashAppleReportStylePartiallySymbolicated)
         {
-            thisLineStyle = isMainExecutable ? KSAppleReportStyleUnsymbolicated : KSAppleReportStyleSymbolicated;
+            thisLineStyle = isMainExecutable ? SentryCrashAppleReportStyleUnsymbolicated : SentryCrashAppleReportStyleSymbolicated;
         }
 
         NSString* preamble = [NSString stringWithFormat:FMT_TRACE_PREAMBLE, traceNum, [objName UTF8String], pc];
         NSString* unsymbolicated = [NSString stringWithFormat:FMT_TRACE_UNSYMBOLICATED, objAddr, pc - objAddr];
         NSString* symbolicated = @"(null)";
-        if(thisLineStyle != KSAppleReportStyleUnsymbolicated && [symName isKindOfClass:[NSString class]])
+        if(thisLineStyle != SentryCrashAppleReportStyleUnsymbolicated && [symName isKindOfClass:[NSString class]])
         {
             symbolicated = [NSString stringWithFormat:FMT_TRACE_SYMBOLICATED, symName, pc - symAddr];
         }
         else
         {
-            thisLineStyle = KSAppleReportStyleUnsymbolicated;
+            thisLineStyle = SentryCrashAppleReportStyleUnsymbolicated;
         }
 
 
         // Apple has started replacing symbols for any function/method
         // beginning with an underscore with "<redacted>" in iOS 6.
         // No, I can't think of any valid reason to do this, either.
-        if(thisLineStyle == KSAppleReportStyleSymbolicated &&
+        if(thisLineStyle == SentryCrashAppleReportStyleSymbolicated &&
            [symName isEqualToString:kAppleRedactedText])
         {
-            thisLineStyle = KSAppleReportStyleUnsymbolicated;
+            thisLineStyle = SentryCrashAppleReportStyleUnsymbolicated;
         }
 
         switch (thisLineStyle)
         {
-            case KSAppleReportStyleSymbolicatedSideBySide:
+            case SentryCrashAppleReportStyleSymbolicatedSideBySide:
                 [str appendFormat:@"%@ %@ (%@)\n", preamble, unsymbolicated, symbolicated];
                 break;
-            case KSAppleReportStyleSymbolicated:
+            case SentryCrashAppleReportStyleSymbolicated:
                 [str appendFormat:@"%@ %@\n", preamble, symbolicated];
                 break;
-            case KSAppleReportStylePartiallySymbolicated: // Should not happen
-            case KSAppleReportStyleUnsymbolicated:
+            case SentryCrashAppleReportStylePartiallySymbolicated: // Should not happen
+            case SentryCrashAppleReportStyleUnsymbolicated:
                 [str appendFormat:@"%@ %@\n", preamble, unsymbolicated];
                 break;
         }
@@ -622,9 +622,9 @@ static NSDictionary* g_registerOrders;
 - (NSString*) JSONForObject:(id) object
 {
     NSError* error = nil;
-    NSData* encoded = [KSJSONCodec encode:object
-                                  options:KSJSONEncodeOptionPretty |
-                       KSJSONEncodeOptionSorted
+    NSData* encoded = [SentryCrashJSONCodec encode:object
+                                  options:SentryCrashJSONEncodeOptionPretty |
+                       SentryCrashJSONEncodeOptionSorted
                                     error:&error];
     if(error != nil)
     {

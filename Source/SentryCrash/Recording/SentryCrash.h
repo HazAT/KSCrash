@@ -41,10 +41,10 @@ typedef enum
 
 typedef enum
 {
-    KSCDeleteNever,
-    KSCDeleteOnSucess,
-    KSCDeleteAlways
-} KSCDeleteBehavior;
+    SentryCrashCDeleteNever,
+    SentryCrashCDeleteOnSucess,
+    SentryCrashCDeleteAlways
+} SentryCrashCDeleteBehavior;
 
 /**
  * Reports any crashes that occur in the application.
@@ -68,14 +68,14 @@ typedef enum
 
 /** What to do after sending reports via sendAllReportsWithCompletion:
  *
- * - Use KSCDeleteNever if you will manually manage the reports.
- * - Use KSCDeleteAlways if you will be using an alert confirmation (otherwise it
+ * - Use SentryCrashCDeleteNever if you will manually manage the reports.
+ * - Use SentryCrashCDeleteAlways if you will be using an alert confirmation (otherwise it
  *   will nag the user incessantly until he selects "yes").
- * - Use KSCDeleteOnSuccess for all other situations.
+ * - Use SentryCrashCDeleteOnSuccess for all other situations.
  *
- * Default: KSCDeleteAlways
+ * Default: SentryCrashCDeleteAlways
  */
-@property(nonatomic,readwrite,assign) KSCDeleteBehavior deleteBehaviorAfterSendAll;
+@property(nonatomic,readwrite,assign) SentryCrashCDeleteBehavior deleteBehaviorAfterSendAll;
 
 /** The monitors that will or have been installed.
  * Note: This value may change once SentryCrash is installed if some monitors
@@ -155,7 +155,7 @@ typedef enum
  * Note: If you use an installation, it will automatically set this property.
  *       Do not modify it in such a case.
  */
-@property(nonatomic,readwrite,assign) KSReportWriteCallback onCrash;
+@property(nonatomic,readwrite,assign) SentryCrashReportWriteCallback onCrash;
 
 /** Add a copy of SentryCrash's console log messages to the crash report.
  */

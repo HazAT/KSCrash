@@ -25,8 +25,8 @@
 
 #include "SentryCrashCachedData.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 #include <mach/mach.h>
 #include <errno.h>
@@ -46,8 +46,8 @@
 
 static int g_pollingIntervalInSeconds;
 static pthread_t g_cacheThread;
-static KSThread* g_allMachThreads;
-static KSThread* g_allPThreads;
+static SentryCrashThread* g_allMachThreads;
+static SentryCrashThread* g_allPThreads;
 static const char** g_allThreadNames;
 static const char** g_allQueueNames;
 static int g_allThreadsCount;
@@ -56,8 +56,8 @@ static _Atomic(int) g_semaphoreCount;
 static void updateThreadList()
 {
     int oldThreadsCount = g_allThreadsCount;
-    KSThread* allMachThreads = NULL;
-    KSThread* allPThreads = NULL;
+    SentryCrashThread* allMachThreads = NULL;
+    SentryCrashThread* allPThreads = NULL;
     static const char** allThreadNames;
     static const char** allQueueNames;
 
@@ -75,13 +75,13 @@ static void updateThreadList()
         char buffer[1000];
         thread_t thread = threads[i];
         pthread_t pthread = pthread_from_mach_thread_np(thread);
-        allMachThreads[i] = (KSThread)thread;
-        allPThreads[i] = (KSThread)pthread;
+        allMachThreads[i] = (SentryCrashThread)thread;
+        allPThreads[i] = (SentryCrashThread)pthread;
         if(pthread != 0 && pthread_getname_np(pthread, buffer, sizeof(buffer)) == 0 && buffer[0] != 0)
         {
             allThreadNames[i] = strdup(buffer);
         }
-        if(ksthread_getQueueName((KSThread)thread, buffer, sizeof(buffer)) && buffer[0] != 0)
+        if(sentrycrashthread_getQueueName((SentryCrashThread)thread, buffer, sizeof(buffer)) && buffer[0] != 0)
         {
             allQueueNames[i] = strdup(buffer);
         }
@@ -150,7 +150,7 @@ static void* monitorCachedData(__unused void* const userData)
     return NULL;
 }
 
-void ksccd_init(int pollingIntervalInSeconds)
+void sentrycrashccd_init(int pollingIntervalInSeconds)
 {
     g_pollingIntervalInSeconds = pollingIntervalInSeconds;
     pthread_attr_t attr;
@@ -162,12 +162,12 @@ void ksccd_init(int pollingIntervalInSeconds)
                            "SentryCrash Cached Data Monitor");
     if(error != 0)
     {
-        KSLOG_ERROR("pthread_create_suspended_np: %s", strerror(error));
+        SentryCrashLOG_ERROR("pthread_create_suspended_np: %s", strerror(error));
     }
     pthread_attr_destroy(&attr);
 }
 
-void ksccd_freeze()
+void sentrycrashccd_freeze()
 {
     if(g_semaphoreCount++ <= 0)
     {
@@ -176,7 +176,7 @@ void ksccd_freeze()
     }
 }
 
-void ksccd_unfreeze()
+void sentrycrashccd_unfreeze()
 {
     if(--g_semaphoreCount < 0)
     {
@@ -185,7 +185,7 @@ void ksccd_unfreeze()
     }
 }
 
-KSThread* ksccd_getAllThreads(int* threadCount)
+SentryCrashThread* sentrycrashccd_getAllThreads(int* threadCount)
 {
     if(threadCount != NULL)
     {
@@ -194,7 +194,7 @@ KSThread* ksccd_getAllThreads(int* threadCount)
     return g_allMachThreads;
 }
 
-const char* ksccd_getThreadName(KSThread thread)
+const char* sentrycrashccd_getThreadName(SentryCrashThread thread)
 {
     if(g_allThreadNames != NULL)
     {
@@ -209,7 +209,7 @@ const char* ksccd_getThreadName(KSThread thread)
     return NULL;
 }
 
-const char* ksccd_getQueueName(KSThread thread)
+const char* sentrycrashccd_getQueueName(SentryCrashThread thread)
 {
     if(g_allQueueNames != NULL)
     {

@@ -28,17 +28,17 @@ add_library( # Sets the name of the library.
              # file are automatically included.
              ${CMAKE_SOURCE_DIR}/../Source/sentrycrash-lib.cpp
              ${CMAKE_SOURCE_DIR}/../Source/SentryCrashCachedData.c
-             ${CMAKE_SOURCE_DIR}/../Source/KSJNI.cpp
+             ${CMAKE_SOURCE_DIR}/../Source/SentryCrashJNI.cpp
              ${CMAKE_SOURCE_DIR}/../Source/monitors/SentryCrashMonitor_System.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSCPU.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSDebug.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSDynamicLinker.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSID.cpp
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSMachineContext.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSMemory.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSStackCursor_SelfThread.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSSymbolicator.c
-             ${CMAKE_SOURCE_DIR}/../Source/tools/KSThread.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashCPU.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashDebug.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashDynamicLinker.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashID.cpp
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashMachineContext.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashMemory.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashStackCursor_SelfThread.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashSymbolicator.c
+             ${CMAKE_SOURCE_DIR}/../Source/tools/SentryCrashThread.c
              ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashC.c
              ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashReport.c
              ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashReportFixer.c
@@ -49,16 +49,16 @@ add_library( # Sets the name of the library.
              ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor_Signal.c
              ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor_User.c
              ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitorType.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSDate.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSDemangle_CPP.cpp
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSFileUtils.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSJSONCodec.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSLogger.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSSignalInfo.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSStackCursor.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSStackCursor_Backtrace.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSStackCursor_MachineContext.c
-             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSString.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashDate.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashDemangle_CPP.cpp
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashFileUtils.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashJSONCodec.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashLogger.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashSignalInfo.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashStackCursor.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashStackCursor_Backtrace.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashStackCursor_MachineContext.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/SentryCrashString.c
            )
 
 # Searches for a specified prebuilt library and stores the path as a

@@ -27,16 +27,16 @@
 
 #include "SentryCrashMonitor_MachException.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSCPU.h"
-#include "KSID.h"
-#include "KSThread.h"
-#include "KSSystemCapabilities.h"
-#include "KSStackCursor_MachineContext.h"
+#include "SentryCrashCPU.h"
+#include "SentryCrashID.h"
+#include "SentryCrashThread.h"
+#include "SentryCrashSystemCapabilities.h"
+#include "SentryCrashStackCursor_MachineContext.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
-#if KSCRASH_HAS_MACH
+#if SentryCrashCRASH_HAS_MACH
 
 #include <mach/mach.h>
 #include <pthread.h>
@@ -117,7 +117,7 @@ typedef struct
 static volatile bool g_isEnabled = false;
 
 static SentryCrash_MonitorContext g_monitorContext;
-static KSStackCursor g_stackCursor;
+static SentryCrashStackCursor g_stackCursor;
 
 static bool g_isHandlingCrash = false;
 
@@ -155,10 +155,10 @@ static char g_secondaryEventID[37];
  */
 static void restoreExceptionPorts(void)
 {
-    KSLOG_DEBUG("Restoring original exception ports.");
+    SentryCrashLOG_DEBUG("Restoring original exception ports.");
     if(g_previousExceptionPorts.count == 0)
     {
-        KSLOG_DEBUG("Original exception ports were already restored.");
+        SentryCrashLOG_DEBUG("Original exception ports were already restored.");
         return;
     }
 
@@ -168,7 +168,7 @@ static void restoreExceptionPorts(void)
     // Reinstall old exception ports.
     for(mach_msg_type_number_t i = 0; i < g_previousExceptionPorts.count; i++)
     {
-        KSLOG_TRACE("Restoring port index %d", i);
+        SentryCrashLOG_TRACE("Restoring port index %d", i);
         kr = task_set_exception_ports(thisTask,
                                       g_previousExceptionPorts.masks[i],
                                       g_previousExceptionPorts.ports[i],
@@ -176,11 +176,11 @@ static void restoreExceptionPorts(void)
                                       g_previousExceptionPorts.flavors[i]);
         if(kr != KERN_SUCCESS)
         {
-            KSLOG_ERROR("task_set_exception_ports: %s",
+            SentryCrashLOG_ERROR("task_set_exception_ports: %s",
                         mach_error_string(kr));
         }
     }
-    KSLOG_DEBUG("Exception ports restored.");
+    SentryCrashLOG_DEBUG("Exception ports restored.");
     g_previousExceptionPorts.count = 0;
 }
 
@@ -268,14 +268,14 @@ static void* handleExceptions(void* const userData)
     pthread_setname_np(threadName);
     if(threadName == kThreadSecondary)
     {
-        KSLOG_DEBUG("This is the secondary thread. Suspending.");
-        thread_suspend((thread_t)ksthread_self());
+        SentryCrashLOG_DEBUG("This is the secondary thread. Suspending.");
+        thread_suspend((thread_t)sentrycrashthread_self());
         eventID = g_secondaryEventID;
     }
 
     for(;;)
     {
-        KSLOG_DEBUG("Waiting for mach exception");
+        SentryCrashLOG_DEBUG("Waiting for mach exception");
 
         // Wait for a message.
         kern_return_t kr = mach_msg(&exceptionMessage.header,
@@ -291,59 +291,59 @@ static void* handleExceptions(void* const userData)
         }
 
         // Loop and try again on failure.
-        KSLOG_ERROR("mach_msg: %s", mach_error_string(kr));
+        SentryCrashLOG_ERROR("mach_msg: %s", mach_error_string(kr));
     }
 
-    KSLOG_DEBUG("Trapped mach exception code 0x%x, subcode 0x%x",
+    SentryCrashLOG_DEBUG("Trapped mach exception code 0x%x, subcode 0x%x",
                 exceptionMessage.code[0], exceptionMessage.code[1]);
     if(g_isEnabled)
     {
-        ksmc_suspendEnvironment();
+        sentrycrashmc_suspendEnvironment();
         g_isHandlingCrash = true;
-        kscm_notifyFatalExceptionCaptured(true);
+        sentrycrashcm_notifyFatalExceptionCaptured(true);
 
-        KSLOG_DEBUG("Exception handler is installed. Continuing exception handling.");
+        SentryCrashLOG_DEBUG("Exception handler is installed. Continuing exception handling.");
 
 
         // Switch to the secondary thread if necessary, or uninstall the handler
         // to avoid a death loop.
-        if(ksthread_self() == g_primaryMachThread)
+        if(sentrycrashthread_self() == g_primaryMachThread)
         {
-            KSLOG_DEBUG("This is the primary exception thread. Activating secondary thread.");
+            SentryCrashLOG_DEBUG("This is the primary exception thread. Activating secondary thread.");
 // TODO: This was put here to avoid a freeze. Does secondary thread ever fire?
             restoreExceptionPorts();
             if(thread_resume(g_secondaryMachThread) != KERN_SUCCESS)
             {
-                KSLOG_DEBUG("Could not activate secondary thread. Restoring original exception ports.");
+                SentryCrashLOG_DEBUG("Could not activate secondary thread. Restoring original exception ports.");
             }
         }
         else
         {
-            KSLOG_DEBUG("This is the secondary exception thread. Restoring original exception ports.");
+            SentryCrashLOG_DEBUG("This is the secondary exception thread. Restoring original exception ports.");
 //            restoreExceptionPorts();
         }
 
         // Fill out crash information
-        KSLOG_DEBUG("Fetching machine state.");
-        KSMC_NEW_CONTEXT(machineContext);
+        SentryCrashLOG_DEBUG("Fetching machine state.");
+        SentryCrashMC_NEW_CONTEXT(machineContext);
         SentryCrash_MonitorContext* crashContext = &g_monitorContext;
         crashContext->offendingMachineContext = machineContext;
-        kssc_initCursor(&g_stackCursor, NULL, NULL);
-        if(ksmc_getContextForThread(exceptionMessage.thread.name, machineContext, true))
+        sentrycrashsc_initCursor(&g_stackCursor, NULL, NULL);
+        if(sentrycrashmc_getContextForThread(exceptionMessage.thread.name, machineContext, true))
         {
-            kssc_initWithMachineContext(&g_stackCursor, 100, machineContext);
-            KSLOG_TRACE("Fault address 0x%x, instruction address 0x%x", kscpu_faultAddress(machineContext), kscpu_instructionAddress(machineContext));
+            sentrycrashsc_initWithMachineContext(&g_stackCursor, 100, machineContext);
+            SentryCrashLOG_TRACE("Fault address 0x%x, instruction address 0x%x", sentrycrashcpu_faultAddress(machineContext), sentrycrashcpu_instructionAddress(machineContext));
             if(exceptionMessage.exception == EXC_BAD_ACCESS)
             {
-                crashContext->faultAddress = kscpu_faultAddress(machineContext);
+                crashContext->faultAddress = sentrycrashcpu_faultAddress(machineContext);
             }
             else
             {
-                crashContext->faultAddress = kscpu_instructionAddress(machineContext);
+                crashContext->faultAddress = sentrycrashcpu_instructionAddress(machineContext);
             }
         }
 
-        KSLOG_DEBUG("Filling out context.");
+        SentryCrashLOG_DEBUG("Filling out context.");
         crashContext->crashType = SentryCrashMonitorTypeMachException;
         crashContext->eventID = eventID;
         crashContext->registersAreValid = true;
@@ -360,14 +360,14 @@ static void* handleExceptions(void* const userData)
         crashContext->signal.signum = signalForMachException(crashContext->mach.type, crashContext->mach.code);
         crashContext->stackCursor = &g_stackCursor;
 
-        kscm_handleException(crashContext);
+        sentrycrashcm_handleException(crashContext);
 
-        KSLOG_DEBUG("Crash handling complete. Restoring original handlers.");
+        SentryCrashLOG_DEBUG("Crash handling complete. Restoring original handlers.");
         g_isHandlingCrash = false;
-        ksmc_resumeEnvironment();
+        sentrycrashmc_resumeEnvironment();
     }
 
-    KSLOG_DEBUG("Replying to mach exception message.");
+    SentryCrashLOG_DEBUG("Replying to mach exception message.");
     // Send a reply saying "I didn't handle this exception".
     replyMessage.header = exceptionMessage.header;
     replyMessage.NDR = exceptionMessage.NDR;
@@ -391,18 +391,18 @@ static void* handleExceptions(void* const userData)
 
 static void uninstallExceptionHandler()
 {
-    KSLOG_DEBUG("Uninstalling mach exception handler.");
+    SentryCrashLOG_DEBUG("Uninstalling mach exception handler.");
 
     // NOTE: Do not deallocate the exception port. If a secondary crash occurs
     // it will hang the process.
 
     restoreExceptionPorts();
 
-    thread_t thread_self = (thread_t)ksthread_self();
+    thread_t thread_self = (thread_t)sentrycrashthread_self();
 
     if(g_primaryPThread != 0 && g_primaryMachThread != thread_self)
     {
-        KSLOG_DEBUG("Canceling primary exception thread.");
+        SentryCrashLOG_DEBUG("Canceling primary exception thread.");
         if(g_isHandlingCrash)
         {
             thread_terminate(g_primaryMachThread);
@@ -416,7 +416,7 @@ static void uninstallExceptionHandler()
     }
     if(g_secondaryPThread != 0 && g_secondaryMachThread != thread_self)
     {
-        KSLOG_DEBUG("Canceling secondary exception thread.");
+        SentryCrashLOG_DEBUG("Canceling secondary exception thread.");
         if(g_isHandlingCrash)
         {
             thread_terminate(g_secondaryMachThread);
@@ -430,12 +430,12 @@ static void uninstallExceptionHandler()
     }
 
     g_exceptionPort = MACH_PORT_NULL;
-    KSLOG_DEBUG("Mach exception handlers uninstalled.");
+    SentryCrashLOG_DEBUG("Mach exception handlers uninstalled.");
 }
 
 static bool installExceptionHandler()
 {
-    KSLOG_DEBUG("Installing mach exception handler.");
+    SentryCrashLOG_DEBUG("Installing mach exception handler.");
 
     bool attributes_created = false;
     pthread_attr_t attr;
@@ -450,7 +450,7 @@ static bool installExceptionHandler()
     EXC_MASK_SOFTWARE |
     EXC_MASK_BREAKPOINT;
 
-    KSLOG_DEBUG("Backing up original exception ports.");
+    SentryCrashLOG_DEBUG("Backing up original exception ports.");
     kr = task_get_exception_ports(thisTask,
                                   mask,
                                   g_previousExceptionPorts.masks,
@@ -460,35 +460,35 @@ static bool installExceptionHandler()
                                   g_previousExceptionPorts.flavors);
     if(kr != KERN_SUCCESS)
     {
-        KSLOG_ERROR("task_get_exception_ports: %s", mach_error_string(kr));
+        SentryCrashLOG_ERROR("task_get_exception_ports: %s", mach_error_string(kr));
         goto failed;
     }
 
     if(g_exceptionPort == MACH_PORT_NULL)
     {
-        KSLOG_DEBUG("Allocating new port with receive rights.");
+        SentryCrashLOG_DEBUG("Allocating new port with receive rights.");
         kr = mach_port_allocate(thisTask,
                                 MACH_PORT_RIGHT_RECEIVE,
                                 &g_exceptionPort);
         if(kr != KERN_SUCCESS)
         {
-            KSLOG_ERROR("mach_port_allocate: %s", mach_error_string(kr));
+            SentryCrashLOG_ERROR("mach_port_allocate: %s", mach_error_string(kr));
             goto failed;
         }
 
-        KSLOG_DEBUG("Adding send rights to port.");
+        SentryCrashLOG_DEBUG("Adding send rights to port.");
         kr = mach_port_insert_right(thisTask,
                                     g_exceptionPort,
                                     g_exceptionPort,
                                     MACH_MSG_TYPE_MAKE_SEND);
         if(kr != KERN_SUCCESS)
         {
-            KSLOG_ERROR("mach_port_insert_right: %s", mach_error_string(kr));
+            SentryCrashLOG_ERROR("mach_port_insert_right: %s", mach_error_string(kr));
             goto failed;
         }
     }
 
-    KSLOG_DEBUG("Installing port as exception handler.");
+    SentryCrashLOG_DEBUG("Installing port as exception handler.");
     kr = task_set_exception_ports(thisTask,
                                   mask,
                                   g_exceptionPort,
@@ -496,11 +496,11 @@ static bool installExceptionHandler()
                                   THREAD_STATE_NONE);
     if(kr != KERN_SUCCESS)
     {
-        KSLOG_ERROR("task_set_exception_ports: %s", mach_error_string(kr));
+        SentryCrashLOG_ERROR("task_set_exception_ports: %s", mach_error_string(kr));
         goto failed;
     }
 
-    KSLOG_DEBUG("Creating secondary exception thread (suspended).");
+    SentryCrashLOG_DEBUG("Creating secondary exception thread (suspended).");
     pthread_attr_init(&attr);
     attributes_created = true;
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -510,32 +510,32 @@ static bool installExceptionHandler()
                            kThreadSecondary);
     if(error != 0)
     {
-        KSLOG_ERROR("pthread_create_suspended_np: %s", strerror(error));
+        SentryCrashLOG_ERROR("pthread_create_suspended_np: %s", strerror(error));
         goto failed;
     }
     g_secondaryMachThread = pthread_mach_thread_np(g_secondaryPThread);
-    ksmc_addReservedThread(g_secondaryMachThread);
+    sentrycrashmc_addReservedThread(g_secondaryMachThread);
 
-    KSLOG_DEBUG("Creating primary exception thread.");
+    SentryCrashLOG_DEBUG("Creating primary exception thread.");
     error = pthread_create(&g_primaryPThread,
                            &attr,
                            &handleExceptions,
                            kThreadPrimary);
     if(error != 0)
     {
-        KSLOG_ERROR("pthread_create: %s", strerror(error));
+        SentryCrashLOG_ERROR("pthread_create: %s", strerror(error));
         goto failed;
     }
     pthread_attr_destroy(&attr);
     g_primaryMachThread = pthread_mach_thread_np(g_primaryPThread);
-    ksmc_addReservedThread(g_primaryMachThread);
+    sentrycrashmc_addReservedThread(g_primaryMachThread);
 
-    KSLOG_DEBUG("Mach exception handler installed.");
+    SentryCrashLOG_DEBUG("Mach exception handler installed.");
     return true;
 
 
 failed:
-    KSLOG_DEBUG("Failed to install mach exception handler.");
+    SentryCrashLOG_DEBUG("Failed to install mach exception handler.");
     if(attributes_created)
     {
         pthread_attr_destroy(&attr);
@@ -551,8 +551,8 @@ static void setEnabled(bool isEnabled)
         g_isEnabled = isEnabled;
         if(isEnabled)
         {
-            ksid_generate(g_primaryEventID);
-            ksid_generate(g_secondaryEventID);
+            sentrycrashid_generate(g_primaryEventID);
+            sentrycrashid_generate(g_secondaryEventID);
             if(!installExceptionHandler())
             {
                 return;
@@ -584,11 +584,11 @@ static void addContextualInfoToEvent(struct SentryCrash_MonitorContext* eventCon
 
 #endif
 
-SentryCrashMonitorAPI* kscm_machexception_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_machexception_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {
-#if KSCRASH_HAS_MACH
+#if SentryCrashCRASH_HAS_MACH
         .setEnabled = setEnabled,
         .isEnabled = isEnabled,
         .addContextualInfoToEvent = addContextualInfoToEvent

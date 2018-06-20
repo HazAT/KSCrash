@@ -38,7 +38,7 @@
 - (void) setUp
 {
     [super setUp];
-    kszombie_install();
+    sentrycrashzombie_install();
 }
 
 - (void) tearDown
@@ -48,14 +48,14 @@
 
 - (void) testDoubleInstall
 {
-    kszombie_install();
+    sentrycrashzombie_install();
 }
 
 - (void) testNoLastDeallocedException
 {
-    const void* address = kszombie_lastDeallocedNSExceptionAddress();
-    const char* name = kszombie_lastDeallocedNSExceptionName();
-    const char* reason = kszombie_lastDeallocedNSExceptionReason();
+    const void* address = sentrycrashzombie_lastDeallocedNSExceptionAddress();
+    const char* name = sentrycrashzombie_lastDeallocedNSExceptionName();
+    const char* reason = sentrycrashzombie_lastDeallocedNSExceptionReason();
 
     XCTAssertTrue(address == NULL, @"");
     XCTAssertTrue(name[0] == 0, @"");
@@ -64,14 +64,14 @@
 
 - (void) testZombieClassNameNull
 {
-    const char* className = kszombie_className(NULL);
+    const char* className = sentrycrashzombie_className(NULL);
     XCTAssertTrue(className == NULL, @"");
 }
 
 - (void) testZombieClassNameNotFound
 {
     // TODO: Figure out why this causes an endless call loop.
-//    const char* className = kszombie_className((void*)1);
+//    const char* className = sentrycrashzombie_className((void*)1);
 //    XCTAssertTrue(className == NULL, @"");
 }
 
@@ -83,7 +83,7 @@
         object = anObject;
     }
 
-    const char* className = kszombie_className((__bridge void*)object);
+    const char* className = sentrycrashzombie_className((__bridge void*)object);
     XCTAssertTrue(strcmp(className, "NSObject") == 0, @"");
 }
 
@@ -95,7 +95,7 @@
         object = anObject;
     }
 
-    const char* className = kszombie_className((__bridge void*)object);
+    const char* className = sentrycrashzombie_className((__bridge void*)object);
     XCTAssertTrue(strcmp(className, "NSProxy") == 0, @"");
 }
 
@@ -111,12 +111,12 @@
         }
     }
 
-    const char* className = kszombie_className((__bridge void*)object);
+    const char* className = sentrycrashzombie_className((__bridge void*)object);
     XCTAssertTrue(strcmp(className, "NSException") == 0, @"");
 
-    const void* address = kszombie_lastDeallocedNSExceptionAddress();
-    const char* name = kszombie_lastDeallocedNSExceptionName();
-    const char* reason = kszombie_lastDeallocedNSExceptionReason();
+    const void* address = sentrycrashzombie_lastDeallocedNSExceptionAddress();
+    const char* name = sentrycrashzombie_lastDeallocedNSExceptionName();
+    const char* reason = sentrycrashzombie_lastDeallocedNSExceptionReason();
 
     XCTAssertTrue(address == (__bridge void*)object, @"");
     XCTAssertTrue(strcmp(name, "name") == 0, @"");

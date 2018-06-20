@@ -27,15 +27,15 @@
  */
 
 
-#include "KSThread.h"
+#include "SentryCrashThread.h"
 
-void ksccd_init(int pollingIntervalInSeconds);
+void sentrycrashccd_init(int pollingIntervalInSeconds);
 
-void ksccd_freeze(void);
-void ksccd_unfreeze(void);
+void sentrycrashccd_freeze(void);
+void sentrycrashccd_unfreeze(void);
 
-KSThread* ksccd_getAllThreads(int* threadCount);
+SentryCrashThread* sentrycrashccd_getAllThreads(int* threadCount);
 
-const char* ksccd_getThreadName(KSThread thread);
+const char* sentrycrashccd_getThreadName(SentryCrashThread thread);
 
-const char* ksccd_getQueueName(KSThread thread);
+const char* sentrycrashccd_getQueueName(SentryCrashThread thread);

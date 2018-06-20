@@ -41,15 +41,15 @@
     thread.name = expectedName;
     [thread start];
     [NSThread sleepForTimeInterval:0.1];
-    ksccd_init(10);
+    sentrycrashccd_init(10);
     [NSThread sleepForTimeInterval:0.1];
     [thread cancel];
-    ksccd_freeze();
-    const char* cName = ksccd_getThreadName(thread.thread);
+    sentrycrashccd_freeze();
+    const char* cName = sentrycrashccd_getThreadName(thread.thread);
     XCTAssertTrue(cName != NULL);
     NSString* name = [NSString stringWithUTF8String:cName];
     XCTAssertEqualObjects(name, expectedName);
-    ksccd_unfreeze();
+    sentrycrashccd_unfreeze();
 }
 
 @end

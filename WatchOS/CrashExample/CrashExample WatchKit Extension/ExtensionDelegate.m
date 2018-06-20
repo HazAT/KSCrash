@@ -8,12 +8,12 @@
 
 #import "ExtensionDelegate.h"
 #import <SentryCrash/SentryCrashInstallationConsole.h>
-#import <SentryCrash/KSLogger.h>
+#import <SentryCrash/SentryCrashLogger.h>
 
 @implementation ExtensionDelegate
 
 - (void)applicationDidFinishLaunching {
-    KSLOG_DEBUG(@"TEST TEST TEST TEST TEST");
+    SentryCrashLOG_DEBUG(@"TEST TEST TEST TEST TEST");
     SentryCrashInstallationConsole* installation = [SentryCrashInstallationConsole new];
     installation.printAppleFormat = NO;
     [installation install];

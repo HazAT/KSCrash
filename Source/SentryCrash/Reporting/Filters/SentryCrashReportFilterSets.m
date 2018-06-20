@@ -33,7 +33,7 @@
 
 @implementation SentryCrashFilterSets
 
-+ (id<SentryCrashReportFilter>) appleFmtWithUserAndSystemData:(KSAppleReportStyle) reportStyle
++ (id<SentryCrashReportFilter>) appleFmtWithUserAndSystemData:(SentryCrashAppleReportStyle) reportStyle
                                                compressed:(BOOL) compressed
 {
     id<SentryCrashReportFilter> appleFilter = [SentryCrashReportFilterAppleFmt filterWithReportStyle:reportStyle];
@@ -42,7 +42,7 @@
                                                  @SentryCrashField_System,
                                                  @SentryCrashField_User,
                                                  nil],
-                                                [SentryCrashReportFilterJSONEncode filterWithOptions:KSJSONEncodeOptionPretty | KSJSONEncodeOptionSorted],
+                                                [SentryCrashReportFilterJSONEncode filterWithOptions:SentryCrashJSONEncodeOptionPretty | SentryCrashJSONEncodeOptionSorted],
                                                 [SentryCrashReportFilterDataToString filter],
                                                 nil];
 

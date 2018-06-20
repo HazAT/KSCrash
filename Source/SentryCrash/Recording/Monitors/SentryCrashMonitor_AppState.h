@@ -125,7 +125,7 @@ const SentryCrash_AppState* const sentrycrashstate_currentState(void);
 
 /** Access the Monitor API.
  */
-SentryCrashMonitorAPI* kscm_appstate_getAPI(void);
+SentryCrashMonitorAPI* sentrycrashcm_appstate_getAPI(void);
 
 
 #ifdef __cplusplus

@@ -50,7 +50,7 @@ of a lot more that they COULD do. Here are some key features of SentryCrash:
 * [Victory](https://github.com/kelp404/Victory)
 * Email
 
-[Here are some examples of the reports it can generate.](https://github.com/kstenerud/SentryCrash/tree/master/Example-Reports/_README.md)
+[Here are some examples of the reports it can generate.](https://github.com/sentrycrashtenerud/SentryCrash/tree/master/Example-Reports/_README.md)
 
 
 ### What's New?

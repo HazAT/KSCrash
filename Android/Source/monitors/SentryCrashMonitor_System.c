@@ -27,15 +27,15 @@
 #include "SentryCrashMonitor_System.h"
 
 #include "SentryCrashMonitorContext.h"
-#include "KSDate.h"
-#include "KSSystemCapabilities.h"
+#include "SentryCrashDate.h"
+#include "SentryCrashSystemCapabilities.h"
 #include <sys/types.h>
 #include <stdbool.h>
 #include <memory.h>
 #include <time.h>
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 
 typedef struct
@@ -83,7 +83,7 @@ static volatile bool g_isEnabled = false;
 static const char* dateString(time_t date)
 {
     char* buffer = malloc(21);
-    ksdate_utcStringFromTimestamp(date, buffer);
+    sentrycrashdate_utcStringFromTimestamp(date, buffer);
     return buffer;
 }
 
@@ -171,7 +171,7 @@ static void addContextualInfoToEvent(SentryCrash_MonitorContext* eventContext)
     }
 }
 
-SentryCrashMonitorAPI* kscm_system_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_system_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

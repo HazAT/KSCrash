@@ -27,13 +27,13 @@
 
 #import "SentryCrashReportFilterJSON.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 
 @interface SentryCrashReportFilterJSONEncode ()
 
-@property(nonatomic,readwrite,assign) KSJSONEncodeOption encodeOptions;
+@property(nonatomic,readwrite,assign) SentryCrashJSONEncodeOption encodeOptions;
 
 @end
 
@@ -42,12 +42,12 @@
 
 @synthesize encodeOptions = _encodeOptions;
 
-+ (SentryCrashReportFilterJSONEncode*) filterWithOptions:(KSJSONEncodeOption) options
++ (SentryCrashReportFilterJSONEncode*) filterWithOptions:(SentryCrashJSONEncodeOption) options
 {
     return [(SentryCrashReportFilterJSONEncode*)[self alloc] initWithOptions:options];
 }
 
-- (id) initWithOptions:(KSJSONEncodeOption) options
+- (id) initWithOptions:(SentryCrashJSONEncodeOption) options
 {
     if((self = [super init]))
     {
@@ -63,7 +63,7 @@
     for(NSDictionary* report in reports)
     {
         NSError* error = nil;
-        NSData* jsonData = [KSJSONCodec encode:report
+        NSData* jsonData = [SentryCrashJSONCodec encode:report
                                        options:self.encodeOptions
                                          error:&error];
         if(jsonData == nil)
@@ -85,7 +85,7 @@
 
 @interface SentryCrashReportFilterJSONDecode ()
 
-@property(nonatomic,readwrite,assign) KSJSONDecodeOption decodeOptions;
+@property(nonatomic,readwrite,assign) SentryCrashJSONDecodeOption decodeOptions;
 
 @end
 
@@ -94,12 +94,12 @@
 
 @synthesize decodeOptions = _encodeOptions;
 
-+ (SentryCrashReportFilterJSONDecode*) filterWithOptions:(KSJSONDecodeOption) options
++ (SentryCrashReportFilterJSONDecode*) filterWithOptions:(SentryCrashJSONDecodeOption) options
 {
     return [(SentryCrashReportFilterJSONDecode*)[self alloc] initWithOptions:options];
 }
 
-- (id) initWithOptions:(KSJSONDecodeOption) options
+- (id) initWithOptions:(SentryCrashJSONDecodeOption) options
 {
     if((self = [super init]))
     {
@@ -115,7 +115,7 @@
     for(NSData* data in reports)
     {
         NSError* error = nil;
-        NSDictionary* report = [KSJSONCodec decode:data
+        NSDictionary* report = [SentryCrashJSONCodec decode:data
                                            options:self.decodeOptions
                                              error:&error];
         if(report == nil)

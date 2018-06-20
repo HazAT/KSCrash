@@ -29,9 +29,9 @@
 #import "SentryCrashInstallation+Private.h"
 #import "SentryCrashReportFilterBasic.h"
 #import "SentryCrash.h"
-#import "KSCString.h"
-#import "KSJSONCodecObjC.h"
-#import "KSLogger.h"
+#import "SentryCrashCString.h"
+#import "SentryCrashJSONCodecObjC.h"
+#import "SentryCrashLogger.h"
 #import "NSError+SimpleConstructor.h"
 #import <objc/runtime.h>
 
@@ -48,7 +48,7 @@ typedef struct
 
 typedef struct
 {
-    KSReportWriteCallback userCrashCallback;
+    SentryCrashReportWriteCallback userCrashCallback;
     int reportFieldsCount;
     ReportField* reportFields[0];
 } CrashHandlerData;
@@ -83,8 +83,8 @@ static void crashCallback(const SentryCrashReportWriter* writer)
 @property(nonatomic,readwrite,retain) id value;
 
 @property(nonatomic,readwrite,retain) NSMutableData* fieldBacking;
-@property(nonatomic,readwrite,retain) KSCString* keyBacking;
-@property(nonatomic,readwrite,retain) KSCString* valueBacking;
+@property(nonatomic,readwrite,retain) SentryCrashCString* keyBacking;
+@property(nonatomic,readwrite,retain) SentryCrashCString* valueBacking;
 
 @end
 
@@ -126,7 +126,7 @@ static void crashCallback(const SentryCrashReportWriter* writer)
     }
     else
     {
-        self.keyBacking = [KSCString stringWithString:key];
+        self.keyBacking = [SentryCrashCString stringWithString:key];
     }
     self.field->key = self.keyBacking.bytes;
 }
@@ -141,15 +141,15 @@ static void crashCallback(const SentryCrashReportWriter* writer)
     }
 
     NSError* error = nil;
-    NSData* jsonData = [KSJSONCodec encode:value options:KSJSONEncodeOptionPretty | KSJSONEncodeOptionSorted error:&error];
+    NSData* jsonData = [SentryCrashJSONCodec encode:value options:SentryCrashJSONEncodeOptionPretty | SentryCrashJSONEncodeOptionSorted error:&error];
     if(jsonData == nil)
     {
-        KSLOG_ERROR(@"Could not set value %@ for property %@: %@", value, self.key, error);
+        SentryCrashLOG_ERROR(@"Could not set value %@ for property %@: %@", value, self.key, error);
     }
     else
     {
         _value = value;
-        self.valueBacking = [KSCString stringWithData:jsonData];
+        self.valueBacking = [SentryCrashCString stringWithData:jsonData];
         self.field->value = self.valueBacking.bytes;
     }
 }
@@ -300,7 +300,7 @@ static void crashCallback(const SentryCrashReportWriter* writer)
     return result;
 }
 
-- (KSReportWriteCallback) onCrash
+- (SentryCrashReportWriteCallback) onCrash
 {
     @synchronized(self)
     {
@@ -308,7 +308,7 @@ static void crashCallback(const SentryCrashReportWriter* writer)
     }
 }
 
-- (void) setOnCrash:(KSReportWriteCallback)onCrash
+- (void) setOnCrash:(SentryCrashReportWriteCallback)onCrash
 {
     @synchronized(self)
     {

@@ -38,8 +38,8 @@
 
 - (void) testInstallAndRemove
 {
-    SentryCrashMonitorAPI* api = kscm_deadlock_getAPI();
-    kscm_setDeadlockHandlerWatchdogInterval(10);
+    SentryCrashMonitorAPI* api = sentrycrashcm_deadlock_getAPI();
+    sentrycrashcm_setDeadlockHandlerWatchdogInterval(10);
     api->setEnabled(true);
     XCTAssertTrue(api->isEnabled());
     [NSThread sleepForTimeInterval:0.1];
@@ -49,7 +49,7 @@
 
 - (void) testDoubleInstallAndRemove
 {
-    SentryCrashMonitorAPI* api = kscm_deadlock_getAPI();
+    SentryCrashMonitorAPI* api = sentrycrashcm_deadlock_getAPI();
 
     api->setEnabled(true);
     XCTAssertTrue(api->isEnabled());

@@ -27,6 +27,6 @@
 #ifndef HDR_SentryCrashReportVersion_h
 #define HDR_SentryCrashReportVersion_h
 
-#define KSCRASH_REPORT_VERSION "3.2.0"
+#define SentryCrashCRASH_REPORT_VERSION "3.2.0"
 
 #endif /* HDR_SentryCrashReportVersion_h */

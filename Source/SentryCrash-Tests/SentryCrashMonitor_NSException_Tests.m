@@ -38,7 +38,7 @@
 
 - (void) testInstallAndRemove
 {
-    SentryCrashMonitorAPI* api = kscm_nsexception_getAPI();
+    SentryCrashMonitorAPI* api = sentrycrashcm_nsexception_getAPI();
     api->setEnabled(true);
     XCTAssertTrue(api->isEnabled());
     [NSThread sleepForTimeInterval:0.1];
@@ -48,7 +48,7 @@
 
 - (void) testDoubleInstallAndRemove
 {
-    SentryCrashMonitorAPI* api = kscm_nsexception_getAPI();
+    SentryCrashMonitorAPI* api = sentrycrashcm_nsexception_getAPI();
 
     api->setEnabled(true);
     XCTAssertTrue(api->isEnabled());

@@ -60,7 +60,7 @@ Thread 4:
 Thread 5 name:  SentryCrash Exception Handler (Secondary)
 Thread 5:
 0   libsystem_kernel.dylib          0x3618bc00 0x3617c000 + 64512 (mach_msg_trap + 20)
-1   Crash-Tester                    0x000efd28 0xc3000 + 183592 (ksmachexc_i_handleExceptions + 184)
+1   Crash-Tester                    0x000efd28 0xc3000 + 183592 (sentrycrashmachexc_i_handleExceptions + 184)
 2   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
 Thread 6 name:  SentryCrash Exception Handler (Primary)

@@ -60,12 +60,12 @@
     id<SentryCrashReportFilter> formatFilter;
     if(self.printAppleFormat)
     {
-        formatFilter = [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicated];
+        formatFilter = [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicated];
     }
     else
     {
         formatFilter = [SentryCrashReportFilterPipeline filterWithFilters:
-                        [SentryCrashReportFilterJSONEncode filterWithOptions:KSJSONEncodeOptionPretty | KSJSONEncodeOptionSorted],
+                        [SentryCrashReportFilterJSONEncode filterWithOptions:SentryCrashJSONEncodeOptionPretty | SentryCrashJSONEncodeOptionSorted],
                         [SentryCrashReportFilterStringify new],
                         nil];
     }

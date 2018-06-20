@@ -32,12 +32,12 @@
 #import "SentryCrashReportFilterGZip.h"
 #import "SentryCrashReportFilterJSON.h"
 #import "NSError+SimpleConstructor.h"
-#import "KSSystemCapabilities.h"
+#import "SentryCrashSystemCapabilities.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
-#if KSCRASH_HAS_MESSAGEUI
+#if SentryCrashCRASH_HAS_MESSAGEUI
 #import <MessageUI/MessageUI.h>
 
 
@@ -86,7 +86,7 @@
     {
         if(![report isKindOfClass:[NSData class]])
         {
-            KSLOG_ERROR(@"Report was of type %@", [report class]);
+            SentryCrashLOG_ERROR(@"Report was of type %@", [report class]);
         }
         else
         {
@@ -226,7 +226,7 @@
 - (id <SentryCrashReportFilter>) defaultCrashReportFilterSet
 {
     return [SentryCrashReportFilterPipeline filterWithFilters:
-            [SentryCrashReportFilterJSONEncode filterWithOptions:KSJSONEncodeOptionSorted | KSJSONEncodeOptionPretty],
+            [SentryCrashReportFilterJSONEncode filterWithOptions:SentryCrashJSONEncodeOptionSorted | SentryCrashJSONEncodeOptionPretty],
             [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
             self,
             nil];
@@ -235,7 +235,7 @@
 - (id <SentryCrashReportFilter>) defaultCrashReportFilterSetAppleFmt
 {
     return [SentryCrashReportFilterPipeline filterWithFilters:
-            [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicatedSideBySide],
+            [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicatedSideBySide],
             [SentryCrashReportFilterStringToData filter],
             [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
             self,
@@ -332,7 +332,7 @@
 - (id <SentryCrashReportFilter>) defaultCrashReportFilterSet
 {
     return [SentryCrashReportFilterPipeline filterWithFilters:
-            [SentryCrashReportFilterJSONEncode filterWithOptions:KSJSONEncodeOptionSorted | KSJSONEncodeOptionPretty],
+            [SentryCrashReportFilterJSONEncode filterWithOptions:SentryCrashJSONEncodeOptionSorted | SentryCrashJSONEncodeOptionPretty],
             [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
             self,
             nil];
@@ -341,7 +341,7 @@
 - (id <SentryCrashReportFilter>) defaultCrashReportFilterSetAppleFmt
 {
     return [SentryCrashReportFilterPipeline filterWithFilters:
-            [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicatedSideBySide],
+            [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicatedSideBySide],
             [SentryCrashReportFilterStringToData filter],
             [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
             self,

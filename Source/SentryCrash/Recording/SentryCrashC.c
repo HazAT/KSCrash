@@ -33,17 +33,17 @@
 #include "SentryCrashReportStore.h"
 #include "SentryCrashMonitor_Deadlock.h"
 #include "SentryCrashMonitor_User.h"
-#include "KSFileUtils.h"
-#include "KSObjC.h"
-#include "KSString.h"
+#include "SentryCrashFileUtils.h"
+#include "SentryCrashObjC.h"
+#include "SentryCrashString.h"
 #include "SentryCrashMonitor_System.h"
 #include "SentryCrashMonitor_Zombie.h"
 #include "SentryCrashMonitor_AppState.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSSystemCapabilities.h"
+#include "SentryCrashSystemCapabilities.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 #include <inttypes.h>
 #include <stdio.h>
@@ -60,9 +60,9 @@ static volatile bool g_installed = 0;
 
 static bool g_shouldAddConsoleLogToReport = false;
 static bool g_shouldPrintPreviousLog = false;
-static char g_consoleLogPath[KSFU_MAX_PATH_LENGTH];
+static char g_consoleLogPath[SentryCrashFU_MAX_PATH_LENGTH];
 static SentryCrashMonitorType g_monitoring = SentryCrashMonitorTypeProductionSafeMinimal;
-static char g_lastCrashReportFilePath[KSFU_MAX_PATH_LENGTH];
+static char g_lastCrashReportFilePath[SentryCrashFU_MAX_PATH_LENGTH];
 
 
 // ============================================================================
@@ -73,7 +73,7 @@ static void printPreviousLog(const char* filePath)
 {
     char* data;
     int length;
-    if(ksfu_readEntireFile(filePath, &data, &length, 0))
+    if(sentrycrashfu_readEntireFile(filePath, &data, &length, 0))
     {
         printf("\nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv Previous Log vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n\n");
         printf("%s\n", data);
@@ -94,7 +94,7 @@ static void printPreviousLog(const char* filePath)
 static void onCrash(struct SentryCrash_MonitorContext* monitorContext)
 {
     if (monitorContext->currentSnapshotUserReported == false) {
-        KSLOG_DEBUG("Updating application state to note crash.");
+        SentryCrashLOG_DEBUG("Updating application state to note crash.");
         sentrycrashstate_notifyAppCrash();
     }
     monitorContext->consoleLogPath = g_shouldAddConsoleLogToReport ? g_consoleLogPath : NULL;
@@ -105,8 +105,8 @@ static void onCrash(struct SentryCrash_MonitorContext* monitorContext)
     }
     else
     {
-        char crashReportFilePath[KSFU_MAX_PATH_LENGTH];
-        kscrs_getNextCrashReportPath(crashReportFilePath);
+        char crashReportFilePath[SentryCrashFU_MAX_PATH_LENGTH];
+        sentrycrashcrs_getNextCrashReportPath(crashReportFilePath);
         strncpy(g_lastCrashReportFilePath, crashReportFilePath, sizeof(g_lastCrashReportFilePath));
         sentrycrashreport_writeStandardReport(monitorContext, crashReportFilePath);
     }
@@ -119,22 +119,22 @@ static void onCrash(struct SentryCrash_MonitorContext* monitorContext)
 
 SentryCrashMonitorType sentrycrash_install(const char* appName, const char* const installPath)
 {
-    KSLOG_DEBUG("Installing crash reporter.");
+    SentryCrashLOG_DEBUG("Installing crash reporter.");
 
     if(g_installed)
     {
-        KSLOG_DEBUG("Crash reporter already installed.");
+        SentryCrashLOG_DEBUG("Crash reporter already installed.");
         return g_monitoring;
     }
     g_installed = 1;
 
-    char path[KSFU_MAX_PATH_LENGTH];
+    char path[SentryCrashFU_MAX_PATH_LENGTH];
     snprintf(path, sizeof(path), "%s/Reports", installPath);
-    ksfu_makePath(path);
-    kscrs_initialize(appName, path);
+    sentrycrashfu_makePath(path);
+    sentrycrashcrs_initialize(appName, path);
 
     snprintf(path, sizeof(path), "%s/Data", installPath);
-    ksfu_makePath(path);
+    sentrycrashfu_makePath(path);
     snprintf(path, sizeof(path), "%s/Data/CrashState.json", installPath);
     sentrycrashstate_initialize(path);
 
@@ -143,14 +143,14 @@ SentryCrashMonitorType sentrycrash_install(const char* appName, const char* cons
     {
         printPreviousLog(g_consoleLogPath);
     }
-    kslog_setLogFilename(g_consoleLogPath, true);
+    sentrycrashlog_setLogFilename(g_consoleLogPath, true);
 
-    ksccd_init(60);
+    sentrycrashccd_init(60);
 
-    kscm_setEventCallback(onCrash);
+    sentrycrashcm_setEventCallback(onCrash);
     SentryCrashMonitorType monitors = sentrycrash_setMonitoring(g_monitoring);
 
-    KSLOG_DEBUG("Installation complete.");
+    SentryCrashLOG_DEBUG("Installation complete.");
     return monitors;
 }
 
@@ -160,8 +160,8 @@ SentryCrashMonitorType sentrycrash_setMonitoring(SentryCrashMonitorType monitors
 
     if(g_installed)
     {
-        kscm_setActiveMonitors(monitors);
-        return kscm_getActiveMonitors();
+        sentrycrashcm_setActiveMonitors(monitors);
+        return sentrycrashcm_getActiveMonitors();
     }
     // Return what we will be monitoring in future.
     return g_monitoring;
@@ -174,8 +174,8 @@ void sentrycrash_setUserInfoJSON(const char* const userInfoJSON)
 
 void sentrycrash_setDeadlockWatchdogInterval(double deadlockWatchdogInterval)
 {
-#if KSCRASH_HAS_OBJC
-    kscm_setDeadlockHandlerWatchdogInterval(deadlockWatchdogInterval);
+#if SentryCrashCRASH_HAS_OBJC
+    sentrycrashcm_setDeadlockHandlerWatchdogInterval(deadlockWatchdogInterval);
 #endif
 }
 
@@ -189,7 +189,7 @@ void sentrycrash_setDoNotIntrospectClasses(const char** doNotIntrospectClasses, 
     sentrycrashreport_setDoNotIntrospectClasses(doNotIntrospectClasses, length);
 }
 
-void sentrycrash_setCrashNotifyCallback(const KSReportWriteCallback onCrashNotify)
+void sentrycrash_setCrashNotifyCallback(const SentryCrashReportWriteCallback onCrashNotify)
 {
     sentrycrashreport_setUserSectionWriteCallback(onCrashNotify);
 }
@@ -206,7 +206,7 @@ void sentrycrash_setPrintPreviousLog(bool shouldPrintPreviousLog)
 
 void sentrycrash_setMaxReportCount(int maxReportCount)
 {
-    kscrs_setMaxReportCount(maxReportCount);
+    sentrycrashcrs_setMaxReportCount(maxReportCount);
 }
 
 void sentrycrash_reportUserException(const char* name,
@@ -217,7 +217,7 @@ void sentrycrash_reportUserException(const char* name,
                                  bool logAllThreads,
                                  bool terminateProgram)
 {
-    kscm_reportUserException(name,
+    sentrycrashcm_reportUserException(name,
                              reason,
                              language,
                              lineOfCode,
@@ -226,7 +226,7 @@ void sentrycrash_reportUserException(const char* name,
                              terminateProgram);
     if(g_shouldAddConsoleLogToReport)
     {
-        kslog_clearLogFile();
+        sentrycrashlog_clearLogFile();
     }
 }
 
@@ -252,33 +252,33 @@ void sentrycrash_notifyAppCrash(void)
 
 int sentrycrash_getReportCount()
 {
-    return kscrs_getReportCount();
+    return sentrycrashcrs_getReportCount();
 }
 
 int sentrycrash_getReportIDs(int64_t* reportIDs, int count)
 {
-    return kscrs_getReportIDs(reportIDs, count);
+    return sentrycrashcrs_getReportIDs(reportIDs, count);
 }
 
 char* sentrycrash_readReport(int64_t reportID)
 {
     if(reportID <= 0)
     {
-        KSLOG_ERROR("Report ID was %" PRIx64, reportID);
+        SentryCrashLOG_ERROR("Report ID was %" PRIx64, reportID);
         return NULL;
     }
 
-    char* rawReport = kscrs_readReport(reportID);
+    char* rawReport = sentrycrashcrs_readReport(reportID);
     if(rawReport == NULL)
     {
-        KSLOG_ERROR("Failed to load report ID %" PRIx64, reportID);
+        SentryCrashLOG_ERROR("Failed to load report ID %" PRIx64, reportID);
         return NULL;
     }
 
-    char* fixedReport = kscrf_fixupCrashReport(rawReport);
+    char* fixedReport = sentrycrashcrf_fixupCrashReport(rawReport);
     if(fixedReport == NULL)
     {
-        KSLOG_ERROR("Failed to fixup report ID %" PRIx64, reportID);
+        SentryCrashLOG_ERROR("Failed to fixup report ID %" PRIx64, reportID);
     }
 
     free(rawReport);
@@ -287,15 +287,15 @@ char* sentrycrash_readReport(int64_t reportID)
 
 int64_t sentrycrash_addUserReport(const char* report, int reportLength)
 {
-    return kscrs_addUserReport(report, reportLength);
+    return sentrycrashcrs_addUserReport(report, reportLength);
 }
 
 void sentrycrash_deleteAllReports()
 {
-    kscrs_deleteAllReports();
+    sentrycrashcrs_deleteAllReports();
 }
 
 void sentrycrash_deleteReportWithID(int64_t reportID)
 {
-    kscrs_deleteReportWithID(reportID);
+    sentrycrashcrs_deleteReportWithID(reportID);
 }

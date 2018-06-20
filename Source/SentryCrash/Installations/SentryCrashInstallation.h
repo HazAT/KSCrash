@@ -45,7 +45,7 @@
  * WARNING: Only call async-safe functions from this function! DO NOT call
  * Objective-C methods!!!
  */
-@property(atomic,readwrite,assign) KSReportWriteCallback onCrash;
+@property(atomic,readwrite,assign) SentryCrashReportWriteCallback onCrash;
 
 /** Install this installation. Call this instead of -[SentryCrash install] to install
  * with everything needed for your particular backend.

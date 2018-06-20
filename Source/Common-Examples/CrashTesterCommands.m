@@ -82,7 +82,7 @@
 {
     [self sendReportsWithMessage:@"Printing standard reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterJSONEncode filterWithOptions:KSJSONEncodeOptionSorted | KSJSONEncodeOptionPretty],
+                                  [SentryCrashReportFilterJSONEncode filterWithOptions:SentryCrashJSONEncodeOptionSorted | SentryCrashJSONEncodeOptionPretty],
                                   [SentryCrashReportFilterDataToString filter],
                                   [SentryCrashReportSinkConsole filter],
                                   nil]];
@@ -92,7 +92,7 @@
 {
     [self sendReportsWithMessage:@"Printing unsymbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleUnsymbolicated],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleUnsymbolicated],
                                   [SentryCrashReportSinkConsole filter],
                                   nil]];
 }
@@ -101,7 +101,7 @@
 {
     [self sendReportsWithMessage:@"Printing partially symbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStylePartiallySymbolicated],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStylePartiallySymbolicated],
                                   [SentryCrashReportSinkConsole filter],
                                   nil]];
 }
@@ -110,7 +110,7 @@
 {
     [self sendReportsWithMessage:@"Printing symbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicated],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicated],
                                   [SentryCrashReportSinkConsole filter],
                                   nil]];
 }
@@ -119,7 +119,7 @@
 {
     [self sendReportsWithMessage:@"Apple Style (Side-By-Side)"
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicatedSideBySide],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicatedSideBySide],
                                   [SentryCrashReportSinkConsole filter],
                                   nil]];
 }
@@ -128,7 +128,7 @@
 {
     [self sendReportsWithMessage:@"Printing side-by-side symbolicated apple reports with system and user data..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashFilterSets appleFmtWithUserAndSystemData:KSAppleReportStyleSymbolicatedSideBySide
+                                  [SentryCrashFilterSets appleFmtWithUserAndSystemData:SentryCrashAppleReportStyleSymbolicatedSideBySide
                                                                         compressed:NO],
                                   [SentryCrashReportSinkConsole filter],
                                   nil]];
@@ -147,7 +147,7 @@
 {
     [self sendReportsWithMessage:@"Mailing unsymbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleUnsymbolicated],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleUnsymbolicated],
                                   [SentryCrashReportFilterStringToData filter],
                                   [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
                                   [SentryCrashReportSinkEMail sinkWithRecipients:nil
@@ -161,7 +161,7 @@
 {
     [self sendReportsWithMessage:@"Mailing partially symbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStylePartiallySymbolicated],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStylePartiallySymbolicated],
                                   [SentryCrashReportFilterStringToData filter],
                                   [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
                                   [SentryCrashReportSinkEMail sinkWithRecipients:nil
@@ -175,7 +175,7 @@
 {
     [self sendReportsWithMessage:@"Mailing symbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicated],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicated],
                                   [SentryCrashReportFilterStringToData filter],
                                   [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
                                   [SentryCrashReportSinkEMail sinkWithRecipients:nil
@@ -189,7 +189,7 @@
 {
     [self sendReportsWithMessage:@"Mailing side-by-side symbolicated apple reports..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicatedSideBySide],
+                                  [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicatedSideBySide],
                                   [SentryCrashReportFilterStringToData filter],
                                   [SentryCrashReportFilterGZipCompress filterWithCompressionLevel:-1],
                                   [SentryCrashReportSinkEMail sinkWithRecipients:nil
@@ -203,7 +203,7 @@
 {
     [self sendReportsWithMessage:@"Mailing side-by-side symbolicated apple reports with system and user data..."
                             sink:[SentryCrashReportFilterPipeline filterWithFilters:
-                                  [SentryCrashFilterSets appleFmtWithUserAndSystemData:KSAppleReportStyleSymbolicatedSideBySide
+                                  [SentryCrashFilterSets appleFmtWithUserAndSystemData:SentryCrashAppleReportStyleSymbolicatedSideBySide
                                                                         compressed:YES],
                                   [SentryCrashReportSinkEMail sinkWithRecipients:nil
                                                                      subject:@"Crash Reports"
@@ -214,7 +214,7 @@
 
 + (void) sendToKSWithCompletion:(SentryCrashReportFilterCompletion)completion
 {
-    [self sendReportsWithMessage:@"Sending reports to KS..."
+    [self sendReportsWithMessage:@"Sending reports to SentryCrash..."
                            sink:[[SentryCrashReportSinkStandard sinkWithURL:kReportURL] defaultCrashReportFilterSet]
                       completion:completion];
 }

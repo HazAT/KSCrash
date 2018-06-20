@@ -27,22 +27,22 @@
 
 #import "SentryCrashReportSinkStandard.h"
 
-#import "KSHTTPMultipartPostBody.h"
-#import "KSHTTPRequestSender.h"
+#import "SentryCrashHTTPMultipartPostBody.h"
+#import "SentryCrashHTTPRequestSender.h"
 #import "NSData+GZip.h"
-#import "KSJSONCodecObjC.h"
-#import "KSReachabilitySentryCrash.h"
+#import "SentryCrashJSONCodecObjC.h"
+#import "SentryCrashReachabilitySentryCrash.h"
 #import "NSError+SimpleConstructor.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 
 @interface SentryCrashReportSinkStandard ()
 
 @property(nonatomic,readwrite,retain) NSURL* url;
 
-@property(nonatomic,readwrite,retain) KSReachableOperationSentryCrash* reachableOperation;
+@property(nonatomic,readwrite,retain) SentryCrashReachableOperationSentryCrash* reachableOperation;
 
 
 @end
@@ -79,9 +79,9 @@
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:self.url
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:15];
-    KSHTTPMultipartPostBody* body = [KSHTTPMultipartPostBody body];
-    NSData* jsonData = [KSJSONCodec encode:reports
-                                   options:KSJSONEncodeOptionSorted
+    SentryCrashHTTPMultipartPostBody* body = [SentryCrashHTTPMultipartPostBody body];
+    NSData* jsonData = [SentryCrashJSONCodec encode:reports
+                                   options:SentryCrashJSONEncodeOptionSorted
                                      error:&error];
     if(jsonData == nil)
     {
@@ -108,11 +108,11 @@
 //    [request setHTTPBody:[[body data] gzippedWithError:nil]];
 //    [request setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
 
-    self.reachableOperation = [KSReachableOperationSentryCrash operationWithHost:[self.url host]
+    self.reachableOperation = [SentryCrashReachableOperationSentryCrash operationWithHost:[self.url host]
                                                                    allowWWAN:YES
                                                                        block:^
     {
-        [[KSHTTPRequestSender sender] sendRequest:request
+        [[SentryCrashHTTPRequestSender sender] sendRequest:request
                                         onSuccess:^(__unused NSHTTPURLResponse* response, __unused NSData* data)
          {
              sentrycrash_callCompletion(onCompletion, reports, YES, nil);

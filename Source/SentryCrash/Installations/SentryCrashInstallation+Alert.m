@@ -38,11 +38,11 @@
                                                        yesAnswer:yesAnswer
                                                         noAnswer:noAnswer]];
     SentryCrash* handler = [SentryCrash sharedInstance];
-    if(handler.deleteBehaviorAfterSendAll == KSCDeleteOnSucess)
+    if(handler.deleteBehaviorAfterSendAll == SentryCrashCDeleteOnSucess)
     {
         // Better to delete always, or else the user will keep getting nagged
         // until he presses "yes"!
-        handler.deleteBehaviorAfterSendAll = KSCDeleteAlways;
+        handler.deleteBehaviorAfterSendAll = SentryCrashCDeleteAlways;
     }
 }
 

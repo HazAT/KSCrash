@@ -34,12 +34,12 @@
  * Limitations:
  * - Not guaranteed to catch all zombies.
  * - Can generate false positives or incorrect class names.
- * - KSZombie itself must be compiled with ARC disabled. You can enable ARC in
- *   your app, but KSZombie must be compiled in a separate library if you do.
+ * - SentryCrashZombie itself must be compiled with ARC disabled. You can enable ARC in
+ *   your app, but SentryCrashZombie must be compiled in a separate library if you do.
  */
 
-#ifndef HDR_KSZombie_h
-#define HDR_KSZombie_h
+#ifndef HDR_SentryCrashZombie_h
+#define HDR_SentryCrashZombie_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,15 +55,15 @@ extern "C" {
  *
  * @return The object's class name, or NULL if it wasn't found.
  */
-const char* kszombie_className(const void* object);
+const char* sentrycrashzombie_className(const void* object);
 
 /** Access the Monitor API.
  */
-SentryCrashMonitorAPI* kscm_zombie_getAPI(void);
+SentryCrashMonitorAPI* sentrycrashcm_zombie_getAPI(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // HDR_KSZombie_h
+#endif // HDR_SentryCrashZombie_h

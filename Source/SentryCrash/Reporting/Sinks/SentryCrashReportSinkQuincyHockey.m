@@ -28,21 +28,21 @@
 #import "SentryCrashReportSinkQuincyHockey.h"
 
 #import "SentryCrashReportFields.h"
-#import "KSHTTPMultipartPostBody.h"
-#import "KSHTTPRequestSender.h"
+#import "SentryCrashHTTPMultipartPostBody.h"
+#import "SentryCrashHTTPRequestSender.h"
 #import "NSData+GZip.h"
 #import "SentryCrashReportFilterAppleFmt.h"
 #import "SentryCrashReportFilterBasic.h"
-#import "KSJSONCodecObjC.h"
-#import "KSReachabilitySentryCrash.h"
+#import "SentryCrashJSONCodecObjC.h"
+#import "SentryCrashReachabilitySentryCrash.h"
 #import "Container+DeepSearch.h"
 #import "NSError+SimpleConstructor.h"
 #import <mach/machine.h>
 #import "SentryCrashMonitor_System.h"
 #import "NSString+URLEncode.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 
 #define kFilterKeyStandard @"standard"
@@ -57,7 +57,7 @@
 @property(nonatomic, readwrite, retain) NSString* contactEmailKey;
 @property(nonatomic, readwrite, retain) NSArray* crashDescriptionKeys;
 @property(nonatomic,readwrite,retain) NSURL* url;
-@property(nonatomic,readwrite,retain) KSReachableOperationSentryCrash* reachableOperation;
+@property(nonatomic,readwrite,retain) SentryCrashReachableOperationSentryCrash* reachableOperation;
 
 @end
 
@@ -109,7 +109,7 @@ crashDescriptionKeys:(NSArray*) crashDescriptionKeys
             [SentryCrashReportFilterCombine filterWithFiltersAndKeys:
              [SentryCrashReportFilterPassthrough filter],
              kFilterKeyStandard,
-             [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicatedSideBySide],
+             [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicatedSideBySide],
              kFilterKeyApple,
              nil],
             self,
@@ -145,21 +145,21 @@ crashDescriptionKeys:(NSArray*) crashDescriptionKeys
         else if([value isKindOfClass:[NSDictionary class]] || [value isKindOfClass:[NSArray class]])
         {
             NSError* error = nil;
-            NSData* encoded = [KSJSONCodec encode:value options:KSJSONEncodeOptionSorted | KSJSONEncodeOptionPretty error:&error];
+            NSData* encoded = [SentryCrashJSONCodec encode:value options:SentryCrashJSONEncodeOptionSorted | SentryCrashJSONEncodeOptionPretty error:&error];
             if(error != nil)
             {
-                KSLOG_ERROR(@"Could not encode report section %@: %@", key, error);
+                SentryCrashLOG_ERROR(@"Could not encode report section %@: %@", key, error);
                 continue;
             }
             stringValue = [[NSString alloc] initWithData:encoded encoding:NSUTF8StringEncoding];
         }
         else if(value == nil)
         {
-            KSLOG_WARN(@"Report section %@ not found", key);
+            SentryCrashLOG_WARN(@"Report section %@ not found", key);
         }
         else
         {
-            KSLOG_ERROR(@"Could not encode report section %@: Don't know how to encode class %@", key, [value class]);
+            SentryCrashLOG_ERROR(@"Could not encode report section %@: Don't know how to encode class %@", key, [value class]);
         }
         if(stringValue != nil)
         {
@@ -396,7 +396,7 @@ crashDescriptionKeys:(NSArray*) crashDescriptionKeys
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:15];
 
-    KSHTTPMultipartPostBody* body = [KSHTTPMultipartPostBody body];
+    SentryCrashHTTPMultipartPostBody* body = [SentryCrashHTTPMultipartPostBody body];
 
     [body appendData:[self toQuincyBody:reports]
                 name:bodyName
@@ -413,33 +413,33 @@ crashDescriptionKeys:(NSArray*) crashDescriptionKeys
 
     dispatch_block_t sendOperation = ^
     {
-        KSLOG_TRACE(@"Sending request to %@", request.URL);
-        [[KSHTTPRequestSender sender] sendRequest:request
+        SentryCrashLOG_TRACE(@"Sending request to %@", request.URL);
+        [[SentryCrashHTTPRequestSender sender] sendRequest:request
                                         onSuccess:^(__unused NSHTTPURLResponse* response,
                                                     __unused NSData* data)
          {
-             KSLOG_DEBUG(@"Post successful");
+             SentryCrashLOG_DEBUG(@"Post successful");
              sentrycrash_callCompletion(onCompletion, reports, YES, nil);
          } onFailure:^(NSHTTPURLResponse* response, NSData* data)
          {
              NSString* text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-             KSLOG_DEBUG(@"Post failed. Code %d", response.statusCode);
-             KSLOG_TRACE(@"Response text:\n%@", text);
+             SentryCrashLOG_DEBUG(@"Post failed. Code %d", response.statusCode);
+             SentryCrashLOG_TRACE(@"Response text:\n%@", text);
              sentrycrash_callCompletion(onCompletion, reports, NO,
                                       [NSError errorWithDomain:[[self class] description]
                                                           code:response.statusCode
                                                    description:text]);
          } onError:^(NSError* error)
          {
-             KSLOG_DEBUG(@"Posting error: %@", error);
+             SentryCrashLOG_DEBUG(@"Posting error: %@", error);
              sentrycrash_callCompletion(onCompletion, reports, NO, error);
          }];
     };
 
     if(self.waitUntilReachable)
     {
-        KSLOG_TRACE(@"Starting reachable operation to host %@", [self.url host]);
-        self.reachableOperation = [KSReachableOperationSentryCrash operationWithHost:[self.url host]
+        SentryCrashLOG_TRACE(@"Starting reachable operation to host %@", [self.url host]);
+        self.reachableOperation = [SentryCrashReachableOperationSentryCrash operationWithHost:[self.url host]
                                                                        allowWWAN:YES
                                                                            block:sendOperation];
     }

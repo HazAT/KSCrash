@@ -26,7 +26,7 @@
 
 
 #import "SentryCrashReportFilter.h"
-#import "KSJSONCodecObjC.h"
+#import "SentryCrashJSONCodecObjC.h"
 
 
 /** Converts reports from dict to JSON.
@@ -36,9 +36,9 @@
  */
 @interface SentryCrashReportFilterJSONEncode : NSObject <SentryCrashReportFilter>
 
-+ (SentryCrashReportFilterJSONEncode*) filterWithOptions:(KSJSONEncodeOption) options;
++ (SentryCrashReportFilterJSONEncode*) filterWithOptions:(SentryCrashJSONEncodeOption) options;
 
-- (id) initWithOptions:(KSJSONEncodeOption) options;
+- (id) initWithOptions:(SentryCrashJSONEncodeOption) options;
 
 @end
 
@@ -50,8 +50,8 @@
  */
 @interface SentryCrashReportFilterJSONDecode : NSObject <SentryCrashReportFilter>
 
-+ (SentryCrashReportFilterJSONDecode*) filterWithOptions:(KSJSONDecodeOption) options;
++ (SentryCrashReportFilterJSONDecode*) filterWithOptions:(SentryCrashJSONDecodeOption) options;
 
-- (id) initWithOptions:(KSJSONDecodeOption) options;
+- (id) initWithOptions:(SentryCrashJSONDecodeOption) options;
 
 @end

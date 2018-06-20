@@ -26,29 +26,29 @@
 
 #import "SentryCrashReportFilterAlert.h"
 
-#import "KSSystemCapabilities.h"
+#import "SentryCrashSystemCapabilities.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
-#if KSCRASH_HAS_ALERTVIEW
+#if SentryCrashCRASH_HAS_ALERTVIEW
 
-#if KSCRASH_HAS_UIKIT
+#if SentryCrashCRASH_HAS_UIKIT
 #import <UIKit/UIKit.h>
 #endif
 
-#if KSCRASH_HAS_NSALERT
+#if SentryCrashCRASH_HAS_NSALERT
 #import <AppKit/AppKit.h>
 #endif
 
 @interface SentryCrashAlertViewProcess : NSObject
-#if KSCRASH_HAS_UIALERTVIEW
+#if SentryCrashCRASH_HAS_UIALERTVIEW
 <UIAlertViewDelegate>
 #endif
 
 @property(nonatomic,readwrite,retain) NSArray* reports;
 @property(nonatomic,readwrite,copy) SentryCrashReportFilterCompletion onCompletion;
-#if KSCRASH_HAS_UIALERTVIEW
+#if SentryCrashCRASH_HAS_UIALERTVIEW
 @property(nonatomic,readwrite,retain) UIAlertView* alertView;
 #endif
 @property(nonatomic,readwrite,assign) NSInteger expectedButtonIndex;
@@ -68,7 +68,7 @@
 
 @synthesize reports = _reports;
 @synthesize onCompletion = _onCompletion;
-#if KSCRASH_HAS_UIALERTVIEW
+#if SentryCrashCRASH_HAS_UIALERTVIEW
 @synthesize alertView = _alertView;
 #endif
 @synthesize expectedButtonIndex = _expectedButtonIndex;
@@ -85,12 +85,12 @@
                 reports:(NSArray*) reports
            onCompletion:(SentryCrashReportFilterCompletion) onCompletion
 {
-    KSLOG_TRACE(@"Starting alert view process");
+    SentryCrashLOG_TRACE(@"Starting alert view process");
     self.reports = reports;
     self.onCompletion = onCompletion;
     self.expectedButtonIndex = noAnswer == nil ? 0 : 1;
 
-#if KSCRASH_HAS_UIALERTVIEW
+#if SentryCrashCRASH_HAS_UIALERTVIEW
     self.alertView = [[UIAlertView alloc] init];
     self.alertView.title = title;
     self.alertView.message = message;
@@ -101,9 +101,9 @@
     [self.alertView addButtonWithTitle:yesAnswer];
     self.alertView.delegate = self;
 
-    KSLOG_TRACE(@"Showing alert view");
+    SentryCrashLOG_TRACE(@"Showing alert view");
     [self.alertView show];
-#elif KSCRASH_HAS_UIALERTCONTROLLER
+#elif SentryCrashCRASH_HAS_UIALERTCONTROLLER
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
                                                                              message:message
                                                                       preferredStyle:UIAlertControllerStyleAlert];
@@ -121,7 +121,7 @@
     [alertController addAction:noAction];
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     [keyWindow.rootViewController presentViewController:alertController animated:YES completion:NULL];
-#elif KSCRASH_HAS_NSALERT
+#elif SentryCrashCRASH_HAS_NSALERT
     NSAlert *alert = [[NSAlert alloc] init];
     [alert addButtonWithTitle:yesAnswer];
     if(noAnswer != nil)
@@ -196,7 +196,7 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^
                    {
-                       KSLOG_TRACE(@"Launching new alert view process");
+                       SentryCrashLOG_TRACE(@"Launching new alert view process");
                        __block SentryCrashAlertViewProcess* process = [[SentryCrashAlertViewProcess alloc] init];
                        [process startWithTitle:self.title
                                        message:self.message
@@ -207,7 +207,7 @@
                                                  BOOL completed,
                                                  NSError* error)
                         {
-                            KSLOG_TRACE(@"alert process complete");
+                            SentryCrashLOG_TRACE(@"alert process complete");
                             sentrycrash_callCompletion(onCompletion, filteredReports, completed, error);
                             dispatch_async(dispatch_get_main_queue(), ^
                                            {
@@ -241,7 +241,7 @@
 {
     if((self = [super init]))
     {
-        KSLOG_WARN(@"Alert filter not available on this platform.");
+        SentryCrashLOG_WARN(@"Alert filter not available on this platform.");
     }
     return self;
 }
@@ -249,7 +249,7 @@
 - (void) filterReports:(NSArray*) reports
           onCompletion:(SentryCrashReportFilterCompletion) onCompletion
 {
-    KSLOG_WARN(@"Alert filter not available on this platform.");
+    SentryCrashLOG_WARN(@"Alert filter not available on this platform.");
     sentrycrash_callCompletion(onCompletion, reports, YES, nil);
 }
 

@@ -40,7 +40,7 @@
 - (id <SentryCrashReportFilter>) defaultCrashReportFilterSet
 {
     return [SentryCrashReportFilterPipeline filterWithFilters:
-            [SentryCrashReportFilterAppleFmt filterWithReportStyle:KSAppleReportStyleSymbolicated],
+            [SentryCrashReportFilterAppleFmt filterWithReportStyle:SentryCrashAppleReportStyleSymbolicated],
             self,
             nil];
 }

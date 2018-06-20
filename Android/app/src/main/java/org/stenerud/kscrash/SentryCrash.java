@@ -229,7 +229,7 @@ public class SentryCrash
      */
     public native void setIntrospectMemory(boolean shouldIntrospectMemory);
 
-    /** Set if KSLOG console messages should be appended to the report.
+    /** Set if SentryCrashLOG console messages should be appended to the report.
      *
      * @param shouldAddConsoleLogToReport If true, add the log to the report.
      */

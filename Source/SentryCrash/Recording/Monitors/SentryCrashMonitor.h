@@ -38,7 +38,7 @@ extern "C" {
 
 
 #include "SentryCrashMonitorType.h"
-#include "KSThread.h"
+#include "SentryCrashThread.h"
 
 #include <stdbool.h>
 
@@ -53,17 +53,17 @@ struct SentryCrash_MonitorContext;
  *
  * @param monitorTypes Which monitors should be active.
  */
-void kscm_setActiveMonitors(SentryCrashMonitorType monitorTypes);
+void sentrycrashcm_setActiveMonitors(SentryCrashMonitorType monitorTypes);
 
 /** Get the currently active monitors.
  */
-SentryCrashMonitorType kscm_getActiveMonitors(void);
+SentryCrashMonitorType sentrycrashcm_getActiveMonitors(void);
 
 /** Set the callback to call when an event is captured.
  *
  * @param onEvent Called whenever an event is captured.
  */
-void kscm_setEventCallback(void (*onEvent)(struct SentryCrash_MonitorContext* monitorContext));
+void sentrycrashcm_setEventCallback(void (*onEvent)(struct SentryCrash_MonitorContext* monitorContext));
 
 
 // ============================================================================
@@ -82,13 +82,13 @@ typedef struct
  *
  * @oaram isAsyncSafeEnvironment If true, only async-safe functions are allowed from now on.
  */
-bool kscm_notifyFatalExceptionCaptured(bool isAsyncSafeEnvironment);
+bool sentrycrashcm_notifyFatalExceptionCaptured(bool isAsyncSafeEnvironment);
 
 /** Start general exception processing.
  *
  * @oaram context Contextual information about the exception.
  */
-void kscm_handleException(struct SentryCrash_MonitorContext* context);
+void sentrycrashcm_handleException(struct SentryCrash_MonitorContext* context);
 
 
 #ifdef __cplusplus

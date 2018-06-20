@@ -26,7 +26,7 @@
 
 
 #import "TestThread.h"
-#import "KSThread.h"
+#import "SentryCrashThread.h"
 
 
 @implementation TestThread
@@ -35,7 +35,7 @@
 
 - (void) main
 {
-    self.thread = (thread_t)ksthread_self();
+    self.thread = (thread_t)sentrycrashthread_self();
     while(!self.isCancelled)
     {
         [[self class] sleepForTimeInterval:0.1];

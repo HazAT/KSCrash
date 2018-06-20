@@ -37,7 +37,7 @@ extern "C" {
 
 /** Access the Monitor API.
  */
-SentryCrashMonitorAPI* kscm_system_getAPI();
+SentryCrashMonitorAPI* sentrycrashcm_system_getAPI();
 
 
 #ifdef __cplusplus

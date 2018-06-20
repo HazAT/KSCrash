@@ -24,13 +24,13 @@
 
 #include "SentryCrashMonitor_CPPException.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSID.h"
-#include "KSThread.h"
-#include "KSMachineContext.h"
-#include "KSStackCursor_SelfThread.h"
+#include "SentryCrashID.h"
+#include "SentryCrashThread.h"
+#include "SentryCrashMachineContext.h"
+#include "SentryCrashStackCursor_SelfThread.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 #include <cxxabi.h>
 #include <dlfcn.h>
@@ -67,7 +67,7 @@ static SentryCrash_MonitorContext g_monitorContext;
 
 // TODO: Thread local storage is not supported < ios 9.
 // Find some other way to do thread local. Maybe storage with lookup by tid?
-static KSStackCursor g_stackCursor;
+static SentryCrashStackCursor g_stackCursor;
 
 
 // ============================================================================
@@ -84,7 +84,7 @@ extern "C"
     {
         if(g_captureNextStackTrace)
         {
-            kssc_initSelfThread(&g_stackCursor, 1);
+            sentrycrashsc_initSelfThread(&g_stackCursor, 1);
         }
 
         static cxa_throw_type orig_cxa_throw = NULL;
@@ -99,8 +99,8 @@ extern "C"
 
 static void CPPExceptionTerminate(void)
 {
-    ksmc_suspendEnvironment();
-    KSLOG_DEBUG("Trapped c++ exception");
+    sentrycrashmc_suspendEnvironment();
+    SentryCrashLOG_DEBUG("Trapped c++ exception");
     const char* name = NULL;
     std::type_info* tinfo = __cxxabiv1::__cxa_current_exception_type();
     if(tinfo != NULL)
@@ -110,7 +110,7 @@ static void CPPExceptionTerminate(void)
 
     if(name == NULL || strcmp(name, "NSException") != 0)
     {
-        kscm_notifyFatalExceptionCaptured(false);
+        sentrycrashcm_notifyFatalExceptionCaptured(false);
         SentryCrash_MonitorContext* crashContext = &g_monitorContext;
         memset(crashContext, 0, sizeof(*crashContext));
 
@@ -118,7 +118,7 @@ static void CPPExceptionTerminate(void)
         const char* description = descriptionBuff;
         descriptionBuff[0] = 0;
 
-        KSLOG_DEBUG("Discovering what kind of exception was thrown.");
+        SentryCrashLOG_DEBUG("Discovering what kind of exception was thrown.");
         g_captureNextStackTrace = false;
         try
         {
@@ -154,10 +154,10 @@ catch(TYPE value)\
         g_captureNextStackTrace = g_isEnabled;
 
         // TODO: Should this be done here? Maybe better in the exception handler?
-        KSMC_NEW_CONTEXT(machineContext);
-        ksmc_getContextForThread(ksthread_self(), machineContext, true);
+        SentryCrashMC_NEW_CONTEXT(machineContext);
+        sentrycrashmc_getContextForThread(sentrycrashthread_self(), machineContext, true);
 
-        KSLOG_DEBUG("Filling out context.");
+        SentryCrashLOG_DEBUG("Filling out context.");
         crashContext->crashType = SentryCrashMonitorTypeCPPException;
         crashContext->eventID = g_eventID;
         crashContext->registersAreValid = false;
@@ -167,15 +167,15 @@ catch(TYPE value)\
         crashContext->crashReason = description;
         crashContext->offendingMachineContext = machineContext;
 
-        kscm_handleException(crashContext);
+        sentrycrashcm_handleException(crashContext);
     }
     else
     {
-        KSLOG_DEBUG("Detected NSException. Letting the current NSException handler deal with it.");
+        SentryCrashLOG_DEBUG("Detected NSException. Letting the current NSException handler deal with it.");
     }
-    ksmc_resumeEnvironment();
+    sentrycrashmc_resumeEnvironment();
 
-    KSLOG_DEBUG("Calling original terminate handler.");
+    SentryCrashLOG_DEBUG("Calling original terminate handler.");
     g_originalTerminateHandler();
 }
 
@@ -190,7 +190,7 @@ static void initialize()
     if(!isInitialized)
     {
         isInitialized = true;
-        kssc_initCursor(&g_stackCursor, NULL, NULL);
+        sentrycrashsc_initCursor(&g_stackCursor, NULL, NULL);
     }
 }
 
@@ -203,7 +203,7 @@ static void setEnabled(bool isEnabled)
         {
             initialize();
 
-            ksid_generate(g_eventID);
+            sentrycrashid_generate(g_eventID);
             g_originalTerminateHandler = std::set_terminate(CPPExceptionTerminate);
         }
         else
@@ -219,7 +219,7 @@ static bool isEnabled()
     return g_isEnabled;
 }
 
-extern "C" SentryCrashMonitorAPI* kscm_cppexception_getAPI()
+extern "C" SentryCrashMonitorAPI* sentrycrashcm_cppexception_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

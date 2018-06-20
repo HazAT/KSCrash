@@ -36,7 +36,7 @@
 #import "SentryCrashReportSinkStandard.h"
 #import "SentryCrashReportSinkVictory.h"
 #import "SentryCrashReportWriter.h"
-#import "KSJSONCodecObjC.h"
+#import "SentryCrashJSONCodecObjC.h"
 #import "NSData+GZip.h"
 
 #endif /* SentryCrashFramework_h */

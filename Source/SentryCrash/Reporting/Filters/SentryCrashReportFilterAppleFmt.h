@@ -64,39 +64,39 @@
  * leaves basic symbol information intact). This increases your app's code
  * footprint by about 10%, but allows basic symbolication on the device.
  *
- * Choosing KSAppleReportStylePartiallySymbolicated symbolicates everything
+ * Choosing SentryCrashAppleReportStylePartiallySymbolicated symbolicates everything
  * except main executable entries so that you can use an offline symbolicator.
  * You will need a dsym file to symbolicate those entries.
  *
- * KSAppleReportStyleSymbolicatedSideBySide generates a best-of-both-worlds
+ * SentryCrashAppleReportStyleSymbolicatedSideBySide generates a best-of-both-worlds
  * report where everything is symbolicated, but any offsets in the main
  * executable will retain both their "unsymbolicated" and "symbolicated"
  * versions side-by-side so that an offline symbolicator can still parse the
  * line and determine the line numbers (provided you have a matching dsym file).
  *
  * In short, if you're not worried about line numbers, or you don't want to
- * do offline symbolication, go with KSAppleReportStyleSymbolicated.
+ * do offline symbolication, go with SentryCrashAppleReportStyleSymbolicated.
  * If you DO care about line numbers, have the dsym file handy, and will be
- * symbolicating offline, use KSAppleReportStyleSymbolicatedSideBySide.
+ * symbolicating offline, use SentryCrashAppleReportStyleSymbolicatedSideBySide.
  */
 typedef enum
 {
     /** Leave all stack trace entries unsymbolicated. */
-    KSAppleReportStyleUnsymbolicated,
+    SentryCrashAppleReportStyleUnsymbolicated,
 
     /** Symbolicate all stack trace entries except for those in the main
      * executable.
      */
-    KSAppleReportStylePartiallySymbolicated,
+    SentryCrashAppleReportStylePartiallySymbolicated,
 
     /** Symbolicate all stack trace entries, but for any in the main executable,
      * put both an unsymbolicated and a symbolicated entry side-by-side.
      */
-    KSAppleReportStyleSymbolicatedSideBySide,
+    SentryCrashAppleReportStyleSymbolicatedSideBySide,
 
     /** Symbolicate everything. */
-    KSAppleReportStyleSymbolicated,
-} KSAppleReportStyle;
+    SentryCrashAppleReportStyleSymbolicated,
+} SentryCrashAppleReportStyle;
 
 
 /** Converts to Apple format.
@@ -106,9 +106,9 @@ typedef enum
  */
 @interface SentryCrashReportFilterAppleFmt : NSObject <SentryCrashReportFilter>
 
-+ (SentryCrashReportFilterAppleFmt*) filterWithReportStyle:(KSAppleReportStyle) reportStyle;
++ (SentryCrashReportFilterAppleFmt*) filterWithReportStyle:(SentryCrashAppleReportStyle) reportStyle;
 
-- (id) initWithReportStyle:(KSAppleReportStyle) reportStyle;
+- (id) initWithReportStyle:(SentryCrashAppleReportStyle) reportStyle;
 
 - (NSString*)headerStringForSystemInfo:(NSDictionary*)system reportID:(NSString*)reportID crashTime:(NSDate*)crashTime;
 

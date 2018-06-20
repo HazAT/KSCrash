@@ -26,13 +26,13 @@
 
 #import "SentryCrashMonitor_Deadlock.h"
 #import "SentryCrashMonitorContext.h"
-#import "KSID.h"
-#import "KSThread.h"
-#import "KSStackCursor_MachineContext.h"
+#import "SentryCrashID.h"
+#import "SentryCrashThread.h"
+#import "SentryCrashStackCursor_MachineContext.h"
 #import <Foundation/Foundation.h>
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 
 #define kIdleInterval 5.0f
@@ -51,7 +51,7 @@ static SentryCrash_MonitorContext g_monitorContext;
 /** Thread which monitors other threads. */
 static SentryCrashDeadlockMonitor* g_monitor;
 
-static KSThread g_mainQueueThread;
+static SentryCrashThread g_mainQueueThread;
 
 /** Interval between watchdog pulses. */
 static NSTimeInterval g_watchdogInterval = 0;
@@ -107,17 +107,17 @@ static NSTimeInterval g_watchdogInterval = 0;
 
 - (void) handleDeadlock
 {
-    ksmc_suspendEnvironment();
-    kscm_notifyFatalExceptionCaptured(false);
+    sentrycrashmc_suspendEnvironment();
+    sentrycrashcm_notifyFatalExceptionCaptured(false);
 
-    KSMC_NEW_CONTEXT(machineContext);
-    ksmc_getContextForThread(g_mainQueueThread, machineContext, false);
-    KSStackCursor stackCursor;
-    kssc_initWithMachineContext(&stackCursor, 100, machineContext);
+    SentryCrashMC_NEW_CONTEXT(machineContext);
+    sentrycrashmc_getContextForThread(g_mainQueueThread, machineContext, false);
+    SentryCrashStackCursor stackCursor;
+    sentrycrashsc_initWithMachineContext(&stackCursor, 100, machineContext);
     char eventID[37];
-    ksid_generate(eventID);
+    sentrycrashid_generate(eventID);
 
-    KSLOG_DEBUG(@"Filling out context.");
+    SentryCrashLOG_DEBUG(@"Filling out context.");
     SentryCrash_MonitorContext* crashContext = &g_monitorContext;
     memset(crashContext, 0, sizeof(*crashContext));
     crashContext->crashType = SentryCrashMonitorTypeMainThreadDeadlock;
@@ -126,10 +126,10 @@ static NSTimeInterval g_watchdogInterval = 0;
     crashContext->offendingMachineContext = machineContext;
     crashContext->stackCursor = &stackCursor;
 
-    kscm_handleException(crashContext);
-    ksmc_resumeEnvironment();
+    sentrycrashcm_handleException(crashContext);
+    sentrycrashmc_resumeEnvironment();
 
-    KSLOG_DEBUG(@"Calling abort()");
+    SentryCrashLOG_DEBUG(@"Calling abort()");
     abort();
 }
 
@@ -176,7 +176,7 @@ static void initialize()
     if(!isInitialized)
     {
         isInitialized = true;
-        dispatch_async(dispatch_get_main_queue(), ^{g_mainQueueThread = ksthread_self();});
+        dispatch_async(dispatch_get_main_queue(), ^{g_mainQueueThread = sentrycrashthread_self();});
     }
 }
 
@@ -187,13 +187,13 @@ static void setEnabled(bool isEnabled)
         g_isEnabled = isEnabled;
         if(isEnabled)
         {
-            KSLOG_DEBUG(@"Creating new deadlock monitor.");
+            SentryCrashLOG_DEBUG(@"Creating new deadlock monitor.");
             initialize();
             g_monitor = [[SentryCrashDeadlockMonitor alloc] init];
         }
         else
         {
-            KSLOG_DEBUG(@"Stopping deadlock monitor.");
+            SentryCrashLOG_DEBUG(@"Stopping deadlock monitor.");
             [g_monitor cancel];
             g_monitor = nil;
         }
@@ -205,7 +205,7 @@ static bool isEnabled()
     return g_isEnabled;
 }
 
-SentryCrashMonitorAPI* kscm_deadlock_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_deadlock_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {
@@ -215,7 +215,7 @@ SentryCrashMonitorAPI* kscm_deadlock_getAPI()
     return &api;
 }
 
-void kscm_setDeadlockHandlerWatchdogInterval(double value)
+void sentrycrashcm_setDeadlockHandlerWatchdogInterval(double value)
 {
     g_watchdogInterval = value;
 }

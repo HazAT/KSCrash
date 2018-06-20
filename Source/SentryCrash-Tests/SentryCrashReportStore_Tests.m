@@ -70,14 +70,14 @@
 - (void) prepareReportStoreWithPathEnd:(NSString*) pathEnd
 {
     self.reportStorePath = [self.tempPath stringByAppendingPathComponent:pathEnd];
-    kscrs_initialize(self.appName.UTF8String, self.reportStorePath.UTF8String);
+    sentrycrashcrs_initialize(self.appName.UTF8String, self.reportStorePath.UTF8String);
 }
 
 - (NSArray*) getReportIDs
 {
-    int reportCount = kscrs_getReportCount();
+    int reportCount = sentrycrashcrs_getReportCount();
     int64_t rawReportIDs[reportCount];
-    reportCount = kscrs_getReportIDs(rawReportIDs, reportCount);
+    reportCount = sentrycrashcrs_getReportIDs(rawReportIDs, reportCount);
     NSMutableArray* reportIDs = [NSMutableArray new];
     for(int i = 0; i < reportCount; i++)
     {
@@ -89,8 +89,8 @@
 - (int64_t) writeCrashReportWithStringContents:(NSString*) contents
 {
     NSData* crashData = [contents dataUsingEncoding:NSUTF8StringEncoding];
-    char crashReportPath[KSCRS_MAX_PATH_LENGTH];
-    kscrs_getNextCrashReportPath(crashReportPath);
+    char crashReportPath[SentryCrashCRS_MAX_PATH_LENGTH];
+    sentrycrashcrs_getNextCrashReportPath(crashReportPath);
     [crashData writeToFile:[NSString stringWithUTF8String:crashReportPath] atomically:YES];
     return [self getReportIDFromPath:[NSString stringWithUTF8String:crashReportPath]];
 }
@@ -98,13 +98,13 @@
 - (int64_t) writeUserReportWithStringContents:(NSString*) contents
 {
     NSData* data = [contents dataUsingEncoding:NSUTF8StringEncoding];
-    return kscrs_addUserReport(data.bytes, (int)data.length);
+    return sentrycrashcrs_addUserReport(data.bytes, (int)data.length);
 }
 
 - (void) loadReportID:(int64_t) reportID
          reportString:(NSString* __autoreleasing *) reportString
 {
-    char* reportBytes = kscrs_readReport(reportID);
+    char* reportBytes = sentrycrashcrs_readReport(reportID);
 
     if(reportBytes == NULL)
     {
@@ -118,7 +118,7 @@
 
 - (void) expectHasReportCount:(int) reportCount
 {
-    XCTAssertEqual(kscrs_getReportCount(), reportCount);
+    XCTAssertEqual(sentrycrashcrs_getReportCount(), reportCount);
 }
 
 - (void) expectReports:(NSArray*) reportIDs
@@ -186,14 +186,14 @@
     [self writeUserReportWithStringContents:@"3"];
     [self writeCrashReportWithStringContents:@"4"];
     [self expectHasReportCount:4];
-    kscrs_deleteAllReports();
+    sentrycrashcrs_deleteAllReports();
     [self expectHasReportCount:0];
 }
 
 - (void) testPruneReports
 {
     int reportStorePrunesTo = 7;
-    kscrs_setMaxReportCount(reportStorePrunesTo);
+    sentrycrashcrs_setMaxReportCount(reportStorePrunesTo);
     [self prepareReportStoreWithPathEnd:@"testDeleteAllReports"];
     int64_t prunedReportID = [self writeUserReportWithStringContents:@"u1"];
     [self writeCrashReportWithStringContents:@"c1"];
@@ -204,7 +204,7 @@
     [self writeCrashReportWithStringContents:@"c4"];
     [self writeCrashReportWithStringContents:@"c5"];
     [self expectHasReportCount:8];
-    // Calls kscrs_initialize() again, which prunes the reports.
+    // Calls sentrycrashcrs_initialize() again, which prunes the reports.
     [self prepareReportStoreWithPathEnd:@"testDeleteAllReports"];
     [self expectHasReportCount:reportStorePrunesTo];
     NSArray* reportIDs = [self getReportIDs];

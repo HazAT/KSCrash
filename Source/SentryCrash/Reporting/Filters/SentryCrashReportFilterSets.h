@@ -36,7 +36,7 @@
 
 /** Create an Apple format filter that includes system and user data in JSON format.
  */
-+ (id<SentryCrashReportFilter>) appleFmtWithUserAndSystemData:(KSAppleReportStyle) reportStyle
++ (id<SentryCrashReportFilter>) appleFmtWithUserAndSystemData:(SentryCrashAppleReportStyle) reportStyle
                                                compressed:(BOOL) compressed;
 
 @end

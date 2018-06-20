@@ -38,14 +38,14 @@
 #include "SentryCrashMonitor_User.h"
 #include "SentryCrashMonitor_AppState.h"
 #include "SentryCrashMonitor_Zombie.h"
-#include "KSDebug.h"
-#include "KSThread.h"
-#include "KSSystemCapabilities.h"
+#include "SentryCrashDebug.h"
+#include "SentryCrashThread.h"
+#include "SentryCrashSystemCapabilities.h"
 
 #include <memory.h>
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 
 // ============================================================================
@@ -60,47 +60,47 @@ typedef struct
 
 static Monitor g_monitors[] =
 {
-#if KSCRASH_HAS_MACH
+#if SentryCrashCRASH_HAS_MACH
     {
         .monitorType = SentryCrashMonitorTypeMachException,
-        .getAPI = kscm_machexception_getAPI,
+        .getAPI = sentrycrashcm_machexception_getAPI,
     },
 #endif
-#if KSCRASH_HAS_SIGNAL
+#if SentryCrashCRASH_HAS_SIGNAL
     {
         .monitorType = SentryCrashMonitorTypeSignal,
-        .getAPI = kscm_signal_getAPI,
+        .getAPI = sentrycrashcm_signal_getAPI,
     },
 #endif
-#if KSCRASH_HAS_OBJC
+#if SentryCrashCRASH_HAS_OBJC
     {
         .monitorType = SentryCrashMonitorTypeNSException,
-        .getAPI = kscm_nsexception_getAPI,
+        .getAPI = sentrycrashcm_nsexception_getAPI,
     },
     {
         .monitorType = SentryCrashMonitorTypeMainThreadDeadlock,
-        .getAPI = kscm_deadlock_getAPI,
+        .getAPI = sentrycrashcm_deadlock_getAPI,
     },
     {
         .monitorType = SentryCrashMonitorTypeZombie,
-        .getAPI = kscm_zombie_getAPI,
+        .getAPI = sentrycrashcm_zombie_getAPI,
     },
 #endif
     {
         .monitorType = SentryCrashMonitorTypeCPPException,
-        .getAPI = kscm_cppexception_getAPI,
+        .getAPI = sentrycrashcm_cppexception_getAPI,
     },
     {
         .monitorType = SentryCrashMonitorTypeUserReported,
-        .getAPI = kscm_user_getAPI,
+        .getAPI = sentrycrashcm_user_getAPI,
     },
     {
         .monitorType = SentryCrashMonitorTypeSystem,
-        .getAPI = kscm_system_getAPI,
+        .getAPI = sentrycrashcm_system_getAPI,
     },
     {
         .monitorType = SentryCrashMonitorTypeApplicationState,
-        .getAPI = kscm_appstate_getAPI,
+        .getAPI = sentrycrashcm_appstate_getAPI,
     },
 };
 static int g_monitorsCount = sizeof(g_monitors) / sizeof(*g_monitors);
@@ -154,33 +154,33 @@ static inline void addContextualInfoToEvent(Monitor* monitor, struct SentryCrash
     }
 }
 
-void kscm_setEventCallback(void (*onEvent)(struct SentryCrash_MonitorContext* monitorContext))
+void sentrycrashcm_setEventCallback(void (*onEvent)(struct SentryCrash_MonitorContext* monitorContext))
 {
     g_onExceptionEvent = onEvent;
 }
 
-void kscm_setActiveMonitors(SentryCrashMonitorType monitorTypes)
+void sentrycrashcm_setActiveMonitors(SentryCrashMonitorType monitorTypes)
 {
-    if(ksdebug_isBeingTraced() && (monitorTypes & SentryCrashMonitorTypeDebuggerUnsafe))
+    if(sentrycrashdebug_isBeingTraced() && (monitorTypes & SentryCrashMonitorTypeDebuggerUnsafe))
     {
         static bool hasWarned = false;
         if(!hasWarned)
         {
             hasWarned = true;
-            KSLOGBASIC_WARN("    ************************ Crash Handler Notice ************************");
-            KSLOGBASIC_WARN("    *     App is running in a debugger. Masking out unsafe monitors.     *");
-            KSLOGBASIC_WARN("    * This means that most crashes WILL NOT BE RECORDED while debugging! *");
-            KSLOGBASIC_WARN("    **********************************************************************");
+            SentryCrashLOGBASIC_WARN("    ************************ Crash Handler Notice ************************");
+            SentryCrashLOGBASIC_WARN("    *     App is running in a debugger. Masking out unsafe monitors.     *");
+            SentryCrashLOGBASIC_WARN("    * This means that most crashes WILL NOT BE RECORDED while debugging! *");
+            SentryCrashLOGBASIC_WARN("    **********************************************************************");
         }
         monitorTypes &= SentryCrashMonitorTypeDebuggerSafe;
     }
     if(g_requiresAsyncSafety && (monitorTypes & SentryCrashMonitorTypeAsyncUnsafe))
     {
-        KSLOG_DEBUG("Async-safe environment detected. Masking out unsafe monitors.");
+        SentryCrashLOG_DEBUG("Async-safe environment detected. Masking out unsafe monitors.");
         monitorTypes &= SentryCrashMonitorTypeAsyncSafe;
     }
 
-    KSLOG_DEBUG("Changing active monitors from 0x%x tp 0x%x.", g_activeMonitors, monitorTypes);
+    SentryCrashLOG_DEBUG("Changing active monitors from 0x%x tp 0x%x.", g_activeMonitors, monitorTypes);
 
     SentryCrashMonitorType activeMonitors = SentryCrashMonitorTypeNone;
     for(int i = 0; i < g_monitorsCount; i++)
@@ -198,11 +198,11 @@ void kscm_setActiveMonitors(SentryCrashMonitorType monitorTypes)
         }
     }
 
-    KSLOG_DEBUG("Active monitors are now 0x%x.", activeMonitors);
+    SentryCrashLOG_DEBUG("Active monitors are now 0x%x.", activeMonitors);
     g_activeMonitors = activeMonitors;
 }
 
-SentryCrashMonitorType kscm_getActiveMonitors()
+SentryCrashMonitorType sentrycrashcm_getActiveMonitors()
 {
     return g_activeMonitors;
 }
@@ -212,7 +212,7 @@ SentryCrashMonitorType kscm_getActiveMonitors()
 #pragma mark - Private API -
 // ============================================================================
 
-bool kscm_notifyFatalExceptionCaptured(bool isAsyncSafeEnvironment)
+bool sentrycrashcm_notifyFatalExceptionCaptured(bool isAsyncSafeEnvironment)
 {
     g_requiresAsyncSafety |= isAsyncSafeEnvironment; // Don't let it be unset.
     if(g_handlingFatalException)
@@ -222,13 +222,13 @@ bool kscm_notifyFatalExceptionCaptured(bool isAsyncSafeEnvironment)
     g_handlingFatalException = true;
     if(g_crashedDuringExceptionHandling)
     {
-        KSLOG_INFO("Detected crash in the crash reporter. Uninstalling SentryCrash.");
-        kscm_setActiveMonitors(SentryCrashMonitorTypeNone);
+        SentryCrashLOG_INFO("Detected crash in the crash reporter. Uninstalling SentryCrash.");
+        sentrycrashcm_setActiveMonitors(SentryCrashMonitorTypeNone);
     }
     return g_crashedDuringExceptionHandling;
 }
 
-void kscm_handleException(struct SentryCrash_MonitorContext* context)
+void sentrycrashcm_handleException(struct SentryCrash_MonitorContext* context)
 {
     context->requiresAsyncSafety = g_requiresAsyncSafety;
     if(g_crashedDuringExceptionHandling)
@@ -250,8 +250,8 @@ void kscm_handleException(struct SentryCrash_MonitorContext* context)
         g_handlingFatalException = false;
     } else {
         if(g_handlingFatalException && !g_crashedDuringExceptionHandling) {
-            KSLOG_DEBUG("Exception is fatal. Restoring original handlers.");
-            kscm_setActiveMonitors(SentryCrashMonitorTypeNone);
+            SentryCrashLOG_DEBUG("Exception is fatal. Restoring original handlers.");
+            sentrycrashcm_setActiveMonitors(SentryCrashMonitorTypeNone);
         }
     }
 }

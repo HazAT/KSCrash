@@ -68,7 +68,7 @@ static void onCrash(const SentryCrashReportWriter* writer)
                         nil];
 
     // Don't delete after send for this demo.
-    handler.deleteBehaviorAfterSendAll = KSCDeleteNever;
+    handler.deleteBehaviorAfterSendAll = SentryCrashCDeleteNever;
 
     [handler install];
 }

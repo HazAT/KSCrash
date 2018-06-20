@@ -117,9 +117,9 @@ void sentrycrash_setDoNotIntrospectClasses(const char** doNotIntrospectClasses, 
  *
  * Default: NULL
  */
-void sentrycrash_setCrashNotifyCallback(const KSReportWriteCallback onCrashNotify);
+void sentrycrash_setCrashNotifyCallback(const SentryCrashReportWriteCallback onCrashNotify);
 
-/** Set if KSLOG console messages should be appended to the report.
+/** Set if SentryCrashLOG console messages should be appended to the report.
  *
  * @param shouldAddConsoleLogToReport If true, add the log to the report.
  */

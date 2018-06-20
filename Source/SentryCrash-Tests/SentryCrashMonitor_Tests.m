@@ -36,16 +36,16 @@
 
 - (void) testInstallUninstall
 {
-    kscm_setActiveMonitors(SentryCrashMonitorTypeAll);
-    kscm_setActiveMonitors(SentryCrashMonitorTypeNone);
+    sentrycrashcm_setActiveMonitors(SentryCrashMonitorTypeAll);
+    sentrycrashcm_setActiveMonitors(SentryCrashMonitorTypeNone);
 }
 
 - (void) testSuspendResumeThreads
 {
-    ksmc_suspendEnvironment();
-    ksmc_suspendEnvironment();
-    ksmc_resumeEnvironment();
-    ksmc_resumeEnvironment();
+    sentrycrashmc_suspendEnvironment();
+    sentrycrashmc_suspendEnvironment();
+    sentrycrashmc_resumeEnvironment();
+    sentrycrashmc_resumeEnvironment();
 }
 
 @end

@@ -27,12 +27,12 @@
 
 #include "SentryCrashMonitor_AppState.h"
 
-#include "KSFileUtils.h"
-#include "KSJSONCodec.h"
+#include "SentryCrashFileUtils.h"
+#include "SentryCrashJSONCodec.h"
 #include "SentryCrashMonitorContext.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -84,7 +84,7 @@ static int onBooleanElement(const char* const name, const bool value, void* cons
         state->crashedLastLaunch = value;
     }
 
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onFloatingPointElement(const char* const name, const double value, void* const userData)
@@ -100,7 +100,7 @@ static int onFloatingPointElement(const char* const name, const double value, vo
         state->backgroundDurationSinceLastCrash = value;
     }
 
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onIntegerElement(const char* const name, const int64_t value, void* const userData)
@@ -111,8 +111,8 @@ static int onIntegerElement(const char* const name, const int64_t value, void* c
     {
         if(value != kFormatVersion)
         {
-            KSLOG_ERROR("Expected version 1 but got %" PRId64, value);
-            return KSJSON_ERROR_INVALID_DATA;
+            SentryCrashLOG_ERROR("Expected version 1 but got %" PRId64, value);
+            return SentryCrashJSON_ERROR_INVALID_DATA;
         }
     }
     else if(strcmp(name, kKeyLaunchesSinceLastCrash) == 0)
@@ -130,34 +130,34 @@ static int onIntegerElement(const char* const name, const int64_t value, void* c
 
 static int onNullElement(__unused const char* const name, __unused void* const userData)
 {
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onStringElement(__unused const char* const name,
                            __unused const char* const value,
                            __unused void* const userData)
 {
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onBeginObject(__unused const char* const name, __unused void* const userData)
 {
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onBeginArray(__unused const char* const name, __unused void* const userData)
 {
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onEndContainer(__unused void* const userData)
 {
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 static int onEndData(__unused void* const userData)
 {
-    return KSJSON_OK;
+    return SentryCrashJSON_OK;
 }
 
 
@@ -166,8 +166,8 @@ static int onEndData(__unused void* const userData)
 static int addJSONData(const char* const data, const int length, void* const userData)
 {
     const int fd = *((int*)userData);
-    const bool success = ksfu_writeBytesToFD(fd, data, length);
-    return success ? KSJSON_OK : KSJSON_ERROR_CANNOT_ADD_DATA;
+    const bool success = sentrycrashfu_writeBytesToFD(fd, data, length);
+    return success ? SentryCrashJSON_OK : SentryCrashJSON_ERROR_CANNOT_ADD_DATA;
 }
 
 
@@ -206,13 +206,13 @@ bool loadState(const char* const path)
 
     char* data;
     int length;
-    if(!ksfu_readEntireFile(path, &data, &length, 50000))
+    if(!sentrycrashfu_readEntireFile(path, &data, &length, 50000))
     {
-        KSLOG_ERROR("%s: Could not load file", path);
+        SentryCrashLOG_ERROR("%s: Could not load file", path);
         return false;
     }
 
-    KSJSONDecodeCallbacks callbacks;
+    SentryCrashJSONDecodeCallbacks callbacks;
     callbacks.onBeginArray = onBeginArray;
     callbacks.onBeginObject = onBeginObject;
     callbacks.onBooleanElement = onBooleanElement;
@@ -226,7 +226,7 @@ bool loadState(const char* const path)
     int errorOffset = 0;
 
     char stringBuffer[1000];
-    const int result = ksjson_decode(data,
+    const int result = sentrycrashjson_decode(data,
                                      (int)length,
                                      stringBuffer,
                                      sizeof(stringBuffer),
@@ -234,10 +234,10 @@ bool loadState(const char* const path)
                                      &g_state,
                                      &errorOffset);
     free(data);
-    if(result != KSJSON_OK)
+    if(result != SentryCrashJSON_OK)
     {
-        KSLOG_ERROR("%s, offset %d: %s",
-                    path, errorOffset, ksjson_stringForError(result));
+        SentryCrashLOG_ERROR("%s, offset %d: %s",
+                    path, errorOffset, sentrycrashjson_stringForError(result));
         return false;
     }
     return true;
@@ -254,68 +254,68 @@ bool saveState(const char* const path)
     int fd = open(path, O_RDWR | O_CREAT | O_TRUNC, 0644);
     if(fd < 0)
     {
-        KSLOG_ERROR("Could not open file %s for writing: %s",
+        SentryCrashLOG_ERROR("Could not open file %s for writing: %s",
                     path,
                     strerror(errno));
         return false;
     }
 
-    KSJSONEncodeContext JSONContext;
-    ksjson_beginEncode(&JSONContext,
+    SentryCrashJSONEncodeContext JSONContext;
+    sentrycrashjson_beginEncode(&JSONContext,
                        true,
                        addJSONData,
                        &fd);
 
     int result;
-    if((result = ksjson_beginObject(&JSONContext, NULL)) != KSJSON_OK)
+    if((result = sentrycrashjson_beginObject(&JSONContext, NULL)) != SentryCrashJSON_OK)
     {
         goto done;
     }
-    if((result = ksjson_addIntegerElement(&JSONContext,
+    if((result = sentrycrashjson_addIntegerElement(&JSONContext,
                                           kKeyFormatVersion,
-                                          kFormatVersion)) != KSJSON_OK)
+                                          kFormatVersion)) != SentryCrashJSON_OK)
     {
         goto done;
     }
     // Record this launch crashed state into "crashed last launch" field.
-    if((result = ksjson_addBooleanElement(&JSONContext,
+    if((result = sentrycrashjson_addBooleanElement(&JSONContext,
                                           kKeyCrashedLastLaunch,
-                                          g_state.crashedThisLaunch)) != KSJSON_OK)
+                                          g_state.crashedThisLaunch)) != SentryCrashJSON_OK)
     {
         goto done;
     }
-    if((result = ksjson_addFloatingPointElement(&JSONContext,
+    if((result = sentrycrashjson_addFloatingPointElement(&JSONContext,
                                                 kKeyActiveDurationSinceLastCrash,
-                                                g_state.activeDurationSinceLastCrash)) != KSJSON_OK)
+                                                g_state.activeDurationSinceLastCrash)) != SentryCrashJSON_OK)
     {
         goto done;
     }
-    if((result = ksjson_addFloatingPointElement(&JSONContext,
+    if((result = sentrycrashjson_addFloatingPointElement(&JSONContext,
                                                 kKeyBackgroundDurationSinceLastCrash,
-                                                g_state.backgroundDurationSinceLastCrash)) != KSJSON_OK)
+                                                g_state.backgroundDurationSinceLastCrash)) != SentryCrashJSON_OK)
     {
         goto done;
     }
-    if((result = ksjson_addIntegerElement(&JSONContext,
+    if((result = sentrycrashjson_addIntegerElement(&JSONContext,
                                           kKeyLaunchesSinceLastCrash,
-                                          g_state.launchesSinceLastCrash)) != KSJSON_OK)
+                                          g_state.launchesSinceLastCrash)) != SentryCrashJSON_OK)
     {
         goto done;
     }
-    if((result = ksjson_addIntegerElement(&JSONContext,
+    if((result = sentrycrashjson_addIntegerElement(&JSONContext,
                                           kKeySessionsSinceLastCrash,
-                                          g_state.sessionsSinceLastCrash)) != KSJSON_OK)
+                                          g_state.sessionsSinceLastCrash)) != SentryCrashJSON_OK)
     {
         goto done;
     }
-    result = ksjson_endEncode(&JSONContext);
+    result = sentrycrashjson_endEncode(&JSONContext);
 
 done:
     close(fd);
-    if(result != KSJSON_OK)
+    if(result != SentryCrashJSON_OK)
     {
-        KSLOG_ERROR("%s: %s",
-                    path, ksjson_stringForError(result));
+        SentryCrashLOG_ERROR("%s: %s",
+                    path, sentrycrashjson_stringForError(result));
         return false;
     }
     return true;
@@ -476,7 +476,7 @@ static void addContextualInfoToEvent(SentryCrash_MonitorContext* eventContext)
     }
 }
 
-SentryCrashMonitorAPI* kscm_appstate_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_appstate_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

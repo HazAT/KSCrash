@@ -31,17 +31,17 @@
 #import "SentryCrashDoctor.h"
 #import "SentryCrashReportFields.h"
 #import "SentryCrashMonitor_AppState.h"
-#import "KSJSONCodecObjC.h"
+#import "SentryCrashJSONCodecObjC.h"
 #import "NSError+SimpleConstructor.h"
 #import "SentryCrashMonitorContext.h"
 #import "SentryCrashMonitor_System.h"
-#import "KSSystemCapabilities.h"
+#import "SentryCrashSystemCapabilities.h"
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 #include <inttypes.h>
-#if KSCRASH_HAS_UIKIT
+#if SentryCrashCRASH_HAS_UIKIT
 #import <UIKit/UIKit.h>
 #endif
 
@@ -75,13 +75,13 @@ static NSString* getBasePath()
                                                                YES);
     if([directories count] == 0)
     {
-        KSLOG_ERROR(@"Could not locate cache directory path.");
+        SentryCrashLOG_ERROR(@"Could not locate cache directory path.");
         return nil;
     }
     NSString* cachePath = [directories objectAtIndex:0];
     if([cachePath length] == 0)
     {
-        KSLOG_ERROR(@"Could not locate cache directory path.");
+        SentryCrashLOG_ERROR(@"Could not locate cache directory path.");
         return nil;
     }
     NSString* pathEnd = [@"SentryCrash" stringByAppendingPathComponent:getBundleName()];
@@ -141,10 +141,10 @@ static NSString* getBasePath()
         self.basePath = basePath;
         if(self.basePath == nil)
         {
-            KSLOG_ERROR(@"Failed to initialize crash handler. Crash reporting disabled.");
+            SentryCrashLOG_ERROR(@"Failed to initialize crash handler. Crash reporting disabled.");
             return nil;
         }
-        self.deleteBehaviorAfterSendAll = KSCDeleteAlways;
+        self.deleteBehaviorAfterSendAll = SentryCrashCDeleteAlways;
         self.introspectMemory = YES;
         self.catchZombies = NO;
         self.maxReportCount = 5;
@@ -171,12 +171,12 @@ static NSString* getBasePath()
         NSData* userInfoJSON = nil;
         if(userInfo != nil)
         {
-            userInfoJSON = [self nullTerminated:[KSJSONCodec encode:userInfo
-                                                            options:KSJSONEncodeOptionSorted
+            userInfoJSON = [self nullTerminated:[SentryCrashJSONCodec encode:userInfo
+                                                            options:SentryCrashJSONEncodeOptionSorted
                                                               error:&error]];
             if(error != NULL)
             {
-                KSLOG_ERROR(@"Could not serialize user info: %@", error);
+                SentryCrashLOG_ERROR(@"Could not serialize user info: %@", error);
                 return;
             }
         }
@@ -197,7 +197,7 @@ static NSString* getBasePath()
     sentrycrash_setDeadlockWatchdogInterval(deadlockWatchdogInterval);
 }
 
-- (void) setOnCrash:(KSReportWriteCallback) onCrash
+- (void) setOnCrash:(SentryCrashReportWriteCallback) onCrash
 {
     _onCrash = onCrash;
     sentrycrash_setCrashNotifyCallback(onCrash);
@@ -244,7 +244,7 @@ static NSString* getBasePath()
 - (NSDictionary*) systemInfo
 {
     SentryCrash_MonitorContext fakeEvent = {0};
-    kscm_system_getAPI()->addContextualInfoToEvent(&fakeEvent);
+    sentrycrashcm_system_getAPI()->addContextualInfoToEvent(&fakeEvent);
     NSMutableDictionary* dict = [NSMutableDictionary new];
 
 #define COPY_STRING(A) if (fakeEvent.System.A) dict[@#A] = [NSString stringWithUTF8String:fakeEvent.System.A]
@@ -293,7 +293,7 @@ static NSString* getBasePath()
         return false;
     }
 
-#if KSCRASH_HAS_UIAPPLICATION
+#if SentryCrashCRASH_HAS_UIAPPLICATION
     NSNotificationCenter* nCenter = [NSNotificationCenter defaultCenter];
     [nCenter addObserver:self
                 selector:@selector(applicationDidBecomeActive)
@@ -316,7 +316,7 @@ static NSString* getBasePath()
                     name:UIApplicationWillTerminateNotification
                   object:nil];
 #endif
-#if KSCRASH_HAS_NSEXTENSION
+#if SentryCrashCRASH_HAS_NSEXTENSION
     NSNotificationCenter* nCenter = [NSNotificationCenter defaultCenter];
     [nCenter addObserver:self
                 selector:@selector(applicationDidBecomeActive)
@@ -343,18 +343,18 @@ static NSString* getBasePath()
 {
     NSArray* reports = [self allReports];
 
-    KSLOG_INFO(@"Sending %d crash reports", [reports count]);
+    SentryCrashLOG_INFO(@"Sending %d crash reports", [reports count]);
 
     [self sendReports:reports
          onCompletion:^(NSArray* filteredReports, BOOL completed, NSError* error)
      {
-         KSLOG_DEBUG(@"Process finished with completion: %d", completed);
+         SentryCrashLOG_DEBUG(@"Process finished with completion: %d", completed);
          if(error != nil)
          {
-             KSLOG_ERROR(@"Failed to send reports: %@", error);
+             SentryCrashLOG_ERROR(@"Failed to send reports: %@", error);
          }
-         if((self.deleteBehaviorAfterSendAll == KSCDeleteOnSucess && completed) ||
-            self.deleteBehaviorAfterSendAll == KSCDeleteAlways)
+         if((self.deleteBehaviorAfterSendAll == SentryCrashCDeleteOnSucess && completed) ||
+            self.deleteBehaviorAfterSendAll == SentryCrashCDeleteAlways)
          {
              sentrycrash_deleteAllReports();
          }
@@ -385,10 +385,10 @@ static NSString* getBasePath()
     const char* cLanguage = [language cStringUsingEncoding:NSUTF8StringEncoding];
     const char* cLineOfCode = [lineOfCode cStringUsingEncoding:NSUTF8StringEncoding];
     NSError* error = nil;
-    NSData* jsonData = [KSJSONCodec encode:stackTrace options:0 error:&error];
+    NSData* jsonData = [SentryCrashJSONCodec encode:stackTrace options:0 error:&error];
     if(jsonData == nil || error != nil)
     {
-        KSLOG_ERROR(@"Error encoding stack trace to JSON: %@", error);
+        SentryCrashLOG_ERROR(@"Error encoding stack trace to JSON: %@", error);
         // Don't return, since we can still record other useful information.
     }
     NSString* jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -502,18 +502,18 @@ SYNTHESIZE_CRASH_STATE_PROPERTY(BOOL, crashedLastLaunch)
     }
 
     NSError* error = nil;
-    NSMutableDictionary* crashReport = [KSJSONCodec decode:jsonData
-                                                   options:KSJSONDecodeOptionIgnoreNullInArray |
-                                                           KSJSONDecodeOptionIgnoreNullInObject |
-                                                           KSJSONDecodeOptionKeepPartialObject
+    NSMutableDictionary* crashReport = [SentryCrashJSONCodec decode:jsonData
+                                                   options:SentryCrashJSONDecodeOptionIgnoreNullInArray |
+                                                           SentryCrashJSONDecodeOptionIgnoreNullInObject |
+                                                           SentryCrashJSONDecodeOptionKeepPartialObject
                                                      error:&error];
     if(error != nil)
     {
-        KSLOG_ERROR(@"Encountered error loading crash report %" PRIx64 ": %@", reportID, error);
+        SentryCrashLOG_ERROR(@"Encountered error loading crash report %" PRIx64 ": %@", reportID, error);
     }
     if(crashReport == nil)
     {
-        KSLOG_ERROR(@"Could not load crash report");
+        SentryCrashLOG_ERROR(@"Could not load crash report");
         return nil;
     }
     [self doctorReport:crashReport];

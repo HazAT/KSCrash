@@ -24,12 +24,12 @@
 
 #include "SentryCrashMonitor_User.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSID.h"
-#include "KSThread.h"
-#include "KSStackCursor_SelfThread.h"
+#include "SentryCrashID.h"
+#include "SentryCrashThread.h"
+#include "SentryCrashStackCursor_SelfThread.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
 #include <memory.h>
 #include <stdlib.h>
@@ -40,7 +40,7 @@
 static volatile bool g_isEnabled = false;
 
 
-void kscm_reportUserException(const char* name,
+void sentrycrashcm_reportUserException(const char* name,
                               const char* reason,
                               const char* language,
                               const char* lineOfCode,
@@ -50,28 +50,28 @@ void kscm_reportUserException(const char* name,
 {
     if(!g_isEnabled)
     {
-        KSLOG_WARN("User-reported exception monitor is not installed. Exception has not been recorded.");
+        SentryCrashLOG_WARN("User-reported exception monitor is not installed. Exception has not been recorded.");
     }
     else
     {
         if(logAllThreads)
         {
-            ksmc_suspendEnvironment();
+            sentrycrashmc_suspendEnvironment();
         }
         if(terminateProgram)
         {
-            kscm_notifyFatalExceptionCaptured(false);
+            sentrycrashcm_notifyFatalExceptionCaptured(false);
         }
 
         char eventID[37];
-        ksid_generate(eventID);
-        KSMC_NEW_CONTEXT(machineContext);
-        ksmc_getContextForThread(ksthread_self(), machineContext, true);
-        KSStackCursor stackCursor;
-        kssc_initSelfThread(&stackCursor, 0);
+        sentrycrashid_generate(eventID);
+        SentryCrashMC_NEW_CONTEXT(machineContext);
+        sentrycrashmc_getContextForThread(sentrycrashthread_self(), machineContext, true);
+        SentryCrashStackCursor stackCursor;
+        sentrycrashsc_initSelfThread(&stackCursor, 0);
 
 
-        KSLOG_DEBUG("Filling out context.");
+        SentryCrashLOG_DEBUG("Filling out context.");
         SentryCrash_MonitorContext context;
         memset(&context, 0, sizeof(context));
         context.crashType = SentryCrashMonitorTypeUserReported;
@@ -85,11 +85,11 @@ void kscm_reportUserException(const char* name,
         context.userException.customStackTrace = stackTrace;
         context.stackCursor = &stackCursor;
 
-        kscm_handleException(&context);
+        sentrycrashcm_handleException(&context);
 
         if(logAllThreads)
         {
-            ksmc_resumeEnvironment();
+            sentrycrashmc_resumeEnvironment();
         }
         if(terminateProgram)
         {
@@ -108,7 +108,7 @@ static bool isEnabled()
     return g_isEnabled;
 }
 
-SentryCrashMonitorAPI* kscm_user_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_user_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

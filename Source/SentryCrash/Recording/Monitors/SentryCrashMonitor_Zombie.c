@@ -1,5 +1,5 @@
 //
-//  KSZombie.m
+//  SentryCrashZombie.m
 //
 //  Created by Karl Stenerud on 2012-09-15.
 //
@@ -27,8 +27,8 @@
 
 #include "SentryCrashMonitor_Zombie.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSObjC.h"
-#include "KSLogger.h"
+#include "SentryCrashObjC.h"
+#include "SentryCrashLogger.h"
 
 #include <objc/runtime.h>
 #include <stdlib.h>
@@ -70,36 +70,36 @@ static inline unsigned hashIndex(const void* object)
 static bool copyStringIvar(const void* self, const char* ivarName, char* buffer, int bufferLength)
 {
     Class class = object_getClass((id)self);
-    KSObjCIvar ivar = {0};
-    likely_if(ksobjc_ivarNamed(class, ivarName, &ivar))
+    SentryCrashObjCIvar ivar = {0};
+    likely_if(sentrycrashobjc_ivarNamed(class, ivarName, &ivar))
     {
         void* pointer;
-        likely_if(ksobjc_ivarValue(self, ivar.index, &pointer))
+        likely_if(sentrycrashobjc_ivarValue(self, ivar.index, &pointer))
         {
-            likely_if(ksobjc_isValidObject(pointer))
+            likely_if(sentrycrashobjc_isValidObject(pointer))
             {
-                likely_if(ksobjc_copyStringContents(pointer, buffer, bufferLength) > 0)
+                likely_if(sentrycrashobjc_copyStringContents(pointer, buffer, bufferLength) > 0)
                 {
                     return true;
                 }
                 else
                 {
-                    KSLOG_DEBUG("ksobjc_copyStringContents %s failed", ivarName);
+                    SentryCrashLOG_DEBUG("sentrycrashobjc_copyStringContents %s failed", ivarName);
                 }
             }
             else
             {
-                KSLOG_DEBUG("ksobjc_isValidObject %s failed", ivarName);
+                SentryCrashLOG_DEBUG("sentrycrashobjc_isValidObject %s failed", ivarName);
             }
         }
         else
         {
-            KSLOG_DEBUG("ksobjc_ivarValue %s failed", ivarName);
+            SentryCrashLOG_DEBUG("sentrycrashobjc_ivarValue %s failed", ivarName);
         }
     }
     else
     {
-        KSLOG_DEBUG("ksobjc_ivarNamed %s failed", ivarName);
+        SentryCrashLOG_DEBUG("sentrycrashobjc_ivarNamed %s failed", ivarName);
     }
     return false;
 }
@@ -161,7 +161,7 @@ static void install()
     g_zombieCache = calloc(cacheSize, sizeof(*g_zombieCache));
     if(g_zombieCache == NULL)
     {
-        KSLOG_ERROR("Error: Could not allocate %u bytes of memory. KSZombie NOT installed!",
+        SentryCrashLOG_ERROR("Error: Could not allocate %u bytes of memory. SentryCrashZombie NOT installed!",
               cacheSize * sizeof(*g_zombieCache));
         return;
     }
@@ -190,7 +190,7 @@ static void install()
 //    });
 //}
 
-const char* kszombie_className(const void* object)
+const char* sentrycrashzombie_className(const void* object)
 {
     volatile Zombie* cache = g_zombieCache;
     if(cache == NULL || object == NULL)
@@ -239,7 +239,7 @@ static void addContextualInfoToEvent(SentryCrash_MonitorContext* eventContext)
     }
 }
 
-SentryCrashMonitorAPI* kscm_zombie_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_zombie_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

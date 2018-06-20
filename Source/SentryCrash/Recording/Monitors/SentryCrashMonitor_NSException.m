@@ -26,14 +26,14 @@
 
 #import "SentryCrash.h"
 #import "SentryCrashMonitor_NSException.h"
-#import "KSStackCursor_Backtrace.h"
+#import "SentryCrashStackCursor_Backtrace.h"
 #include "SentryCrashMonitorContext.h"
-#include "KSID.h"
-#include "KSThread.h"
+#include "SentryCrashID.h"
+#include "SentryCrashThread.h"
 #import <Foundation/Foundation.h>
 
-//#define KSLogger_LocalLevel TRACE
-#import "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#import "SentryCrashLogger.h"
 
 
 // ============================================================================
@@ -59,13 +59,13 @@ static NSUncaughtExceptionHandler* g_previousUncaughtExceptionHandler;
  */
 
 static void handleException(NSException* exception, BOOL currentSnapshotUserReported) {
-    KSLOG_DEBUG(@"Trapped exception %@", exception);
+    SentryCrashLOG_DEBUG(@"Trapped exception %@", exception);
     if(g_isEnabled)
     {
-        ksmc_suspendEnvironment();
-        kscm_notifyFatalExceptionCaptured(false);
+        sentrycrashmc_suspendEnvironment();
+        sentrycrashcm_notifyFatalExceptionCaptured(false);
 
-        KSLOG_DEBUG(@"Filling out context.");
+        SentryCrashLOG_DEBUG(@"Filling out context.");
         NSArray* addresses = [exception callStackReturnAddresses];
         NSUInteger numFrames = addresses.count;
         uintptr_t* callstack = malloc(numFrames * sizeof(*callstack));
@@ -75,11 +75,11 @@ static void handleException(NSException* exception, BOOL currentSnapshotUserRepo
         }
 
         char eventID[37];
-        ksid_generate(eventID);
-        KSMC_NEW_CONTEXT(machineContext);
-        ksmc_getContextForThread(ksthread_self(), machineContext, true);
-        KSStackCursor cursor;
-        kssc_initWithBacktrace(&cursor, callstack, (int)numFrames, 0);
+        sentrycrashid_generate(eventID);
+        SentryCrashMC_NEW_CONTEXT(machineContext);
+        sentrycrashmc_getContextForThread(sentrycrashthread_self(), machineContext, true);
+        SentryCrashStackCursor cursor;
+        sentrycrashsc_initWithBacktrace(&cursor, callstack, (int)numFrames, 0);
 
         SentryCrash_MonitorContext* crashContext = &g_monitorContext;
         memset(crashContext, 0, sizeof(*crashContext));
@@ -94,16 +94,16 @@ static void handleException(NSException* exception, BOOL currentSnapshotUserRepo
         crashContext->stackCursor = &cursor;
         crashContext->currentSnapshotUserReported = currentSnapshotUserReported;
 
-        KSLOG_DEBUG(@"Calling main crash handler.");
-        kscm_handleException(crashContext);
+        SentryCrashLOG_DEBUG(@"Calling main crash handler.");
+        sentrycrashcm_handleException(crashContext);
 
         free(callstack);
         if (currentSnapshotUserReported) {
-            ksmc_resumeEnvironment();
+            sentrycrashmc_resumeEnvironment();
         }
         if (g_previousUncaughtExceptionHandler != NULL)
         {
-            KSLOG_DEBUG(@"Calling original exception handler.");
+            SentryCrashLOG_DEBUG(@"Calling original exception handler.");
             g_previousUncaughtExceptionHandler(exception);
         }
     }
@@ -128,17 +128,17 @@ static void setEnabled(bool isEnabled)
         g_isEnabled = isEnabled;
         if(isEnabled)
         {
-            KSLOG_DEBUG(@"Backing up original handler.");
+            SentryCrashLOG_DEBUG(@"Backing up original handler.");
             g_previousUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
 
-            KSLOG_DEBUG(@"Setting new handler.");
+            SentryCrashLOG_DEBUG(@"Setting new handler.");
             NSSetUncaughtExceptionHandler(&handleUncaughtException);
             SentryCrash.sharedInstance.uncaughtExceptionHandler = &handleUncaughtException;
             SentryCrash.sharedInstance.currentSnapshotUserReportedExceptionHandler = &handleCurrentSnapshotUserReportedException;
         }
         else
         {
-            KSLOG_DEBUG(@"Restoring original handler.");
+            SentryCrashLOG_DEBUG(@"Restoring original handler.");
             NSSetUncaughtExceptionHandler(g_previousUncaughtExceptionHandler);
         }
     }
@@ -149,7 +149,7 @@ static bool isEnabled()
     return g_isEnabled;
 }
 
-SentryCrashMonitorAPI* kscm_nsexception_getAPI()
+SentryCrashMonitorAPI* sentrycrashcm_nsexception_getAPI()
 {
     static SentryCrashMonitorAPI api =
     {

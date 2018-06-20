@@ -25,32 +25,32 @@
 
 #include "SentryCrashCachedData.h"
 
-//#define KSLogger_LocalLevel TRACE
-#include "KSLogger.h"
+//#define SentryCrashLogger_LocalLevel TRACE
+#include "SentryCrashLogger.h"
 
-void ksccd_init(__unused int pollingIntervalInSeconds)
+void sentrycrashccd_init(__unused int pollingIntervalInSeconds)
 {
 }
 
-void ksccd_freeze()
+void sentrycrashccd_freeze()
 {
 }
 
-void ksccd_unfreeze()
+void sentrycrashccd_unfreeze()
 {
 }
 
-KSThread* ksccd_getAllThreads(__unused int* threadCount)
-{
-    return NULL;
-}
-
-const char* ksccd_getThreadName(__unused KSThread thread)
+SentryCrashThread* sentrycrashccd_getAllThreads(__unused int* threadCount)
 {
     return NULL;
 }
 
-const char* ksccd_getQueueName(__unused KSThread thread)
+const char* sentrycrashccd_getThreadName(__unused SentryCrashThread thread)
+{
+    return NULL;
+}
+
+const char* sentrycrashccd_getQueueName(__unused SentryCrashThread thread)
 {
     return NULL;
 }
