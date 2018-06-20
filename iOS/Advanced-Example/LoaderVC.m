@@ -6,7 +6,7 @@
 #import "LoaderVC.h"
 
 #import "AppDelegate.h"
-#import <KSCrash/KSCrashInstallation.h>
+#import <SentryCrash/SentryCrashInstallation.h>
 
 /**
  * Defers application loading until all error reports have been sent.
@@ -21,7 +21,7 @@
 - (void) viewDidAppear:(BOOL) animated
 {
     [super viewDidAppear:animated];
-    
+
     // Send all outstanding reports, then show the main view controller.
     AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
     [appDelegate.crashInstallation sendAllReportsWithCompletion:^(NSArray* reports, BOOL completed, NSError* error)

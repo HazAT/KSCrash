@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-package org.stenerud.kscrash;
+package org.stenerud.sentrycrash;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

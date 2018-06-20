@@ -1,6 +1,6 @@
-framework module KSCrash {
-	umbrella header "KSCrashFramework.h"
-	
+framework module SentryCrash {
+	umbrella header "SentryCrashFramework.h"
+
 	export *
 	module * { export * }
 }

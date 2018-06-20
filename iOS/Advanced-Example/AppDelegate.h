@@ -5,11 +5,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class KSCrashInstallation;
+@class SentryCrashInstallation;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow* window;
-@property (strong, nonatomic) KSCrashInstallation* crashInstallation;
+@property (strong, nonatomic) SentryCrashInstallation* crashInstallation;
 
 @end

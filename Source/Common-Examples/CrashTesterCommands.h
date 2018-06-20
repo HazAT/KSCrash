@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Karl Stenerud. All rights reserved.
 //
 
-#import <KSCrash/KSCrashReportFilter.h>
+#import <SentryCrash/SentryCrashReportFilter.h>
 
 @interface CrashTesterCommands : NSObject
 
@@ -39,13 +39,13 @@
 
 + (void) mailSideBySideWithUserAndSystemData;
 
-+ (void) sendToKSWithCompletion:(KSCrashReportFilterCompletion)completion;
++ (void) sendToKSWithCompletion:(SentryCrashReportFilterCompletion)completion;
 
-+ (void) sendToQuincyWithCompletion:(KSCrashReportFilterCompletion)completion;
++ (void) sendToQuincyWithCompletion:(SentryCrashReportFilterCompletion)completion;
 
-+ (void) sendToHockeyWithCompletion:(KSCrashReportFilterCompletion)completion;
++ (void) sendToHockeyWithCompletion:(SentryCrashReportFilterCompletion)completion;
 
 + (void) sendToVictoryWithUserName:(NSString*)userName
-                        completion:(KSCrashReportFilterCompletion)completion;
+                        completion:(SentryCrashReportFilterCompletion)completion;
 
 @end

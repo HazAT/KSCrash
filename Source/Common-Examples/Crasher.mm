@@ -5,7 +5,7 @@
 //
 
 #import "Crasher.h"
-#import <KSCrash/KSCrash.h>
+#import <SentryCrash/SentryCrash.h>
 #import <pthread.h>
 #import <exception>
 
@@ -103,7 +103,7 @@ int g_crasher_denominator = 0;
 - (void) useCorruptObject
 {
     // From http://landonf.bikemonkey.org/2011/09/14
-    
+
     // Random data
     void* pointers[] = {NULL, NULL, NULL};
     void* randomData[] = {
@@ -113,10 +113,10 @@ int g_crasher_denominator = 0;
         (void*)"d",
         (void*)"e",
         (void*)"f"};
-    
+
     // A corrupted/under-retained/re-used piece of memory
     struct {void* isa;} corruptObj = {randomData};
-    
+
     // Message an invalid/corrupt object.
     // This will deadlock if called in a crash handler.
     [(__bridge id)&corruptObj class];
@@ -125,7 +125,7 @@ int g_crasher_denominator = 0;
 - (void) spinRunloop
 {
     // From http://landonf.bikemonkey.org/2011/09/14
-    
+
     dispatch_async(dispatch_get_main_queue(), ^
     {
         NSLog(@"ERROR: Run loop should be dead but isn't!");
@@ -245,7 +245,7 @@ int g_crasher_denominator = 0;
                            @"Main.script, line 10: in function initialize",
                            nil];
 
-    [[KSCrash sharedInstance] reportUserException:name
+    [[SentryCrash sharedInstance] reportUserException:name
                                            reason:reason
                                          language:language
                                        lineOfCode:lineOfCode

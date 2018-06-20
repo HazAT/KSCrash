@@ -1,7 +1,7 @@
 Simple Backend
 ==============
 
-A very basic Flask webapp for receiving a report from a KSCrash standard installation.
+A very basic Flask webapp for receiving a report from a SentryCrash standard installation.
 
 It will store each request in its on directory under the "posts" subdir.
 
@@ -21,7 +21,7 @@ Usage
 - clean.sh: Delete all .pyc files and the posts directory.
 
 
-### KSCrash Installation URL
+### SentryCrash Installation URL
 
 The webapp listens on port 5000, and the post method resides at /crashreport
 

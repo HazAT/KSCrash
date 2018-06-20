@@ -7,17 +7,17 @@
 //
 
 #import "ExtensionDelegate.h"
-#import <KSCrash/KSCrashInstallationConsole.h>
-#import <KSCrash/KSLogger.h>
+#import <SentryCrash/SentryCrashInstallationConsole.h>
+#import <SentryCrash/KSLogger.h>
 
 @implementation ExtensionDelegate
 
 - (void)applicationDidFinishLaunching {
     KSLOG_DEBUG(@"TEST TEST TEST TEST TEST");
-    KSCrashInstallationConsole* installation = [KSCrashInstallationConsole new];
+    SentryCrashInstallationConsole* installation = [SentryCrashInstallationConsole new];
     installation.printAppleFormat = NO;
     [installation install];
-    
+
     [installation sendAllReportsWithCompletion:^(NSArray* reports, BOOL completed, NSError* error)
      {
          if(completed)

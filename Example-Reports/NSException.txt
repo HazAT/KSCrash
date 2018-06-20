@@ -70,30 +70,30 @@ Thread 4:
 Thread 5:
 0   libsystem_kernel.dylib          0x3618dd18 0x3617c000 + 72984 (__semwait_signal + 24)
 1   Foundation                      0x34e41028 0x34db1000 + 589864 (+[NSThread sleepForTimeInterval:] + 96)
-2   Crash-Tester                    0x0003bc10 0x8000 + 211984 (-[KSCrashDeadlockMonitor runMonitor] + 264)
+2   Crash-Tester                    0x0003bc10 0x8000 + 211984 (-[SentryCrashDeadlockMonitor runMonitor] + 264)
 3   Foundation                      0x34dce388 0x34db1000 + 119688 (-[NSThread main] + 44)
 4   Foundation                      0x34e405c8 0x34db1000 + 587208 (__NSThread__main__ + 968)
 5   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
-Thread 6 name:  KSCrash Exception Handler (Secondary)
+Thread 6 name:  SentryCrash Exception Handler (Secondary)
 Thread 6:
 0   libsystem_kernel.dylib          0x3618bc00 0x3617c000 + 64512 (mach_msg_trap + 20)
 1   libsystem_kernel.dylib          0x36188b70 0x3617c000 + 52080 (thread_suspend + 40)
 2   Crash-Tester                    0x00034cb8 0x8000 + 183480 (ksmachexc_i_handleExceptions + 112)
 3   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
-Thread 7 name:  KSCrash Exception Handler (Primary)
+Thread 7 name:  SentryCrash Exception Handler (Primary)
 Thread 7:
 0   libsystem_kernel.dylib          0x3618bc00 0x3617c000 + 64512 (mach_msg_trap + 20)
 1   Crash-Tester                    0x00034d00 0x8000 + 183552 (ksmachexc_i_handleExceptions + 184)
 2   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
 Thread 0 crashed with ARM Thread State:
-    r0: 0x00000000     r1: 0x00000000     r2: 0x00000000     r3: 0x00000000 
-    r4: 0x00000000     r5: 0x00000000     r6: 0x00000000     r7: 0x00000000 
-    r8: 0x00000000     r9: 0x00000000    r10: 0x00000000    r11: 0x00000000 
-    ip: 0x00000000     sp: 0x00000000     lr: 0x00000000     pc: 0x00000000 
-  cpsr: 0x00000000 
+    r0: 0x00000000     r1: 0x00000000     r2: 0x00000000     r3: 0x00000000
+    r4: 0x00000000     r5: 0x00000000     r6: 0x00000000     r7: 0x00000000
+    r8: 0x00000000     r9: 0x00000000    r10: 0x00000000    r11: 0x00000000
+    ip: 0x00000000     sp: 0x00000000     lr: 0x00000000     pc: 0x00000000
+  cpsr: 0x00000000
 
 Binary Images:
     0x8000 -    0x4cfff +Crash-Tester armv7  <99e112d20cb43f73bda6bcfc1f190724> /var/mobile/Applications/B19FDF7E-768B-42D9-88E7-80F757E22883/Crash-Tester.app/Crash-Tester

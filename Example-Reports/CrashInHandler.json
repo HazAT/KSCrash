@@ -1677,7 +1677,7 @@
                             "object_addr": 163840,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 375488,
-                            "symbol_name": "-[KSCrashDeadlockMonitor runMonitor]"
+                            "symbol_name": "-[SentryCrashDeadlockMonitor runMonitor]"
                         },
                         {
                             "instruction_addr": 886891400,
@@ -1758,7 +1758,7 @@
                 "crashed": false,
                 "current_thread": false,
                 "index": 6,
-                "name": "KSCrash Exception Handler (Secondary)",
+                "name": "SentryCrash Exception Handler (Secondary)",
                 "registers": {
                     "basic": {
                         "cpsr": 1610612752,
@@ -1785,7 +1785,7 @@
                 "crashed": false,
                 "current_thread": true,
                 "index": 7,
-                "name": "KSCrash Exception Handler (Primary)"
+                "name": "SentryCrash Exception Handler (Primary)"
             }
         ]
     },
@@ -1836,14 +1836,14 @@
                             "object_addr": 163840,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 346032,
-                            "symbol_name": "kscrashreport_writeStandardReport"
+                            "symbol_name": "sentrycrashreport_writeStandardReport"
                         },
                         {
                             "instruction_addr": 331896,
                             "object_addr": 163840,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 331804,
-                            "symbol_name": "kscrash_i_onCrash"
+                            "symbol_name": "sentrycrash_i_onCrash"
                         },
                         {
                             "instruction_addr": 347792,
@@ -1865,7 +1865,7 @@
                 "crashed": true,
                 "current_thread": false,
                 "index": 7,
-                "name": "KSCrash Exception Handler (Primary)",
+                "name": "SentryCrash Exception Handler (Primary)",
                 "registers": {
                     "basic": {
                         "cpsr": 1073741872,

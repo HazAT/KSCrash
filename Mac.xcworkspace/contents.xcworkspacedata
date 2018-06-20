@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Mac/KSCrash-Mac.xcodeproj">
+      location = "group:Mac/SentryCrash-Mac.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Mac/Example-Apps-Mac.xcodeproj">

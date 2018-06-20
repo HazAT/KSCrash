@@ -11,7 +11,7 @@
 #import "CrashTesterCommands.h"
 #import "Configuration.h"
 
-#import <KSCrash/KSCrash.h>
+#import <SentryCrash/SentryCrash.h>
 
 @interface AppDelegate ()
 
@@ -24,7 +24,7 @@
 
 static BOOL g_crashInHandler = NO;
 
-static void onCrash(const KSCrashReportWriter* writer)
+static void onCrash(const SentryCrashReportWriter* writer)
 {
     if(g_crashInHandler)
     {
@@ -51,7 +51,7 @@ static void onCrash(const KSCrashReportWriter* writer)
 
 - (void) installCrashHandler
 {
-    KSCrash* handler = [KSCrash sharedInstance];
+    SentryCrash* handler = [SentryCrash sharedInstance];
 
 #if kRedirectConsoleLogToDefaultFile
     [handler redirectConsoleLogsToDefaultFile];
@@ -253,7 +253,7 @@ static void onCrash(const KSCrashReportWriter* writer)
 - (IBAction)onDeleteReports:(__unused id)sender
 {
     NSLog(@"Deleting reports...");
-    [[KSCrash sharedInstance] deleteAllReports];
+    [[SentryCrash sharedInstance] deleteAllReports];
     [self updateReportCount];
 }
 

@@ -1,4 +1,4 @@
-package org.stenerud.kscrash;
+package org.stenerud.sentrycrash;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("org.stenerud.kscrash", appContext.getPackageName());
+        assertEquals("org.stenerud.sentrycrash", appContext.getPackageName());
     }
 }

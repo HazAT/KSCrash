@@ -25,7 +25,7 @@
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>WKAppBundleIdentifier</key>
-			<string>org.stenerud.testkscrash.CrashExample.watchkitapp</string>
+			<string>org.stenerud.testsentrycrash.CrashExample.watchkitapp</string>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.watchkit</string>

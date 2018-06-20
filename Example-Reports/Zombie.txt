@@ -52,26 +52,26 @@ Thread 3:
 Thread 4:
 0   libsystem_kernel.dylib          0x3618dd18 0x3617c000 + 72984 (__semwait_signal + 24)
 1   Foundation                      0x34e41028 0x34db1000 + 589864 (+[NSThread sleepForTimeInterval:] + 96)
-2   Crash-Tester                    0x000f6c38 0xc3000 + 212024 (-[KSCrashDeadlockMonitor runMonitor] + 264)
+2   Crash-Tester                    0x000f6c38 0xc3000 + 212024 (-[SentryCrashDeadlockMonitor runMonitor] + 264)
 3   Foundation                      0x34dce388 0x34db1000 + 119688 (-[NSThread main] + 44)
 4   Foundation                      0x34e405c8 0x34db1000 + 587208 (__NSThread__main__ + 968)
 5   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
-Thread 5 name:  KSCrash Exception Handler (Secondary)
+Thread 5 name:  SentryCrash Exception Handler (Secondary)
 Thread 5:
 0   libsystem_kernel.dylib          0x3618bc00 0x3617c000 + 64512 (mach_msg_trap + 20)
 1   Crash-Tester                    0x000efd28 0xc3000 + 183592 (ksmachexc_i_handleExceptions + 184)
 2   libsystem_c.dylib               0x36264310 0x36231000 + 209680 (_pthread_start + 248)
 
-Thread 6 name:  KSCrash Exception Handler (Primary)
+Thread 6 name:  SentryCrash Exception Handler (Primary)
 Thread 6:
 
 Thread 0 crashed with ARM Thread State:
-    r0: 0x1fda2c80     r1: 0x318da778     r2: 0x00000001     r3: 0x35097c89 
-    r4: 0x31fda86c     r5: 0xe5933000     r6: 0x3f8d5540     r7: 0x2fec0b60 
-    r8: 0x00000000     r9: 0x1fda4088    r10: 0x2fec0b7c    r11: 0x00000000 
-    ip: 0x000ca509     sp: 0x2fec0b34     lr: 0x000caafd     pc: 0x35097c9a 
-  cpsr: 0x20000030 
+    r0: 0x1fda2c80     r1: 0x318da778     r2: 0x00000001     r3: 0x35097c89
+    r4: 0x31fda86c     r5: 0xe5933000     r6: 0x3f8d5540     r7: 0x2fec0b60
+    r8: 0x00000000     r9: 0x1fda4088    r10: 0x2fec0b7c    r11: 0x00000000
+    ip: 0x000ca509     sp: 0x2fec0b34     lr: 0x000caafd     pc: 0x35097c9a
+  cpsr: 0x20000030
 
 Binary Images:
    0xc3000 -   0x107fff +Crash-Tester armv7  <5425b875d1423832be8c3b7dd8130813> /var/mobile/Applications/B19FDF7E-768B-42D9-88E7-80F757E22883/Crash-Tester.app/Crash-Tester

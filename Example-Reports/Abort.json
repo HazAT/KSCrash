@@ -1477,7 +1477,7 @@
                             "object_addr": 389120,
                             "object_name": "Crash-Tester",
                             "symbol_addr": 600880,
-                            "symbol_name": "-[KSCrashDeadlockMonitor runMonitor]"
+                            "symbol_name": "-[SentryCrashDeadlockMonitor runMonitor]"
                         },
                         {
                             "instruction_addr": 886891400,
@@ -1565,7 +1565,7 @@
                 "crashed": false,
                 "current_thread": false,
                 "index": 6,
-                "name": "KSCrash Exception Handler (Secondary)",
+                "name": "SentryCrash Exception Handler (Secondary)",
                 "registers": {
                     "basic": {
                         "cpsr": 16,
@@ -1618,7 +1618,7 @@
                 "crashed": false,
                 "current_thread": false,
                 "index": 7,
-                "name": "KSCrash Exception Handler (Primary)",
+                "name": "SentryCrash Exception Handler (Primary)",
                 "registers": {
                     "basic": {
                         "cpsr": 1610612752,

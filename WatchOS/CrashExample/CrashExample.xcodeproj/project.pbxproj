@@ -20,8 +20,8 @@
 		CB666FBD1DB6E01B0048E27F /* InterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = CB666FBC1DB6E01B0048E27F /* InterfaceController.m */; };
 		CB666FC01DB6E01B0048E27F /* ExtensionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB666FBF1DB6E01B0048E27F /* ExtensionDelegate.m */; };
 		CB666FC21DB6E01B0048E27F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB666FC11DB6E01B0048E27F /* Assets.xcassets */; };
-		CB666FD21DB6E0E00048E27F /* KSCrash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB666FD11DB6E0E00048E27F /* KSCrash.framework */; };
-		CB666FD31DB6E0E00048E27F /* KSCrash.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB666FD11DB6E0E00048E27F /* KSCrash.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CB666FD21DB6E0E00048E27F /* SentryCrash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB666FD11DB6E0E00048E27F /* SentryCrash.framework */; };
+		CB666FD31DB6E0E00048E27F /* SentryCrash.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB666FD11DB6E0E00048E27F /* SentryCrash.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,7 +70,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CB666FD31DB6E0E00048E27F /* KSCrash.framework in Embed Frameworks */,
+				CB666FD31DB6E0E00048E27F /* SentryCrash.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,7 +99,7 @@
 		CB666FBF1DB6E01B0048E27F /* ExtensionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExtensionDelegate.m; sourceTree = "<group>"; };
 		CB666FC11DB6E01B0048E27F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CB666FC31DB6E01B0048E27F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CB666FD11DB6E0E00048E27F /* KSCrash.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KSCrash.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB666FD11DB6E0E00048E27F /* SentryCrash.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SentryCrash.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,7 +114,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB666FD21DB6E0E00048E27F /* KSCrash.framework in Frameworks */,
+				CB666FD21DB6E0E00048E27F /* SentryCrash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,7 +124,7 @@
 		CB666F871DB6E01B0048E27F = {
 			isa = PBXGroup;
 			children = (
-				CB666FD11DB6E0E00048E27F /* KSCrash.framework */,
+				CB666FD11DB6E0E00048E27F /* SentryCrash.framework */,
 				CB666F921DB6E01B0048E27F /* CrashExample */,
 				CB666FAB1DB6E01B0048E27F /* CrashExample WatchKit App */,
 				CB666FBA1DB6E01B0048E27F /* CrashExample WatchKit Extension */,
@@ -492,7 +492,7 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				INFOPLIST_FILE = "CrashExample WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testkscrash.CrashExample.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testsentrycrash.CrashExample.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -507,7 +507,7 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				INFOPLIST_FILE = "CrashExample WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testkscrash.CrashExample.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testsentrycrash.CrashExample.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -522,7 +522,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				IBSC_MODULE = CrashExample_WatchKit_Extension;
 				INFOPLIST_FILE = "CrashExample WatchKit App/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testkscrash.CrashExample.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testsentrycrash.CrashExample.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -537,7 +537,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				IBSC_MODULE = CrashExample_WatchKit_Extension;
 				INFOPLIST_FILE = "CrashExample WatchKit App/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testkscrash.CrashExample.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testsentrycrash.CrashExample.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -552,7 +552,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = CrashExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testkscrash.CrashExample;
+				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testsentrycrash.CrashExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -563,7 +563,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = CrashExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testkscrash.CrashExample;
+				PRODUCT_BUNDLE_IDENTIFIER = org.stenerud.testsentrycrash.CrashExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

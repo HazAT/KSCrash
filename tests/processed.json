@@ -2483,7 +2483,7 @@
                     }
                 },
                 "index": 4,
-                "name": "KSCrash Exception Handler (Secondary)",
+                "name": "SentryCrash Exception Handler (Secondary)",
                 "crashed": false,
                 "current_thread": false
             },
@@ -2549,7 +2549,7 @@
                     }
                 },
                 "index": 5,
-                "name": "KSCrash Exception Handler (Primary)",
+                "name": "SentryCrash Exception Handler (Primary)",
                 "crashed": false,
                 "current_thread": false
             }

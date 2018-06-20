@@ -14,7 +14,7 @@
 		CB62405E17EBB46B006471F1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CB62405D17EBB46B006471F1 /* AppDelegate.m */; };
 		CB62406117EBB46B006471F1 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CB62405F17EBB46B006471F1 /* MainMenu.xib */; };
 		CB62406317EBB46B006471F1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB62406217EBB46B006471F1 /* Images.xcassets */; };
-		CB62412917EBCBA2006471F1 /* libKSCrashLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62412817EBCBA2006471F1 /* libKSCrashLib.a */; };
+		CB62412917EBCBA2006471F1 /* libSentryCrashLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62412817EBCBA2006471F1 /* libSentryCrashLib.a */; };
 		CB62414417EBCC97006471F1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62414317EBCC97006471F1 /* libz.dylib */; };
 		CB62414617EBCC9E006471F1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62414517EBCC9E006471F1 /* SystemConfiguration.framework */; };
 		CB8F1DD71CCAF4050022CDF0 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CB8F1DD61CCAF4050022CDF0 /* libc++.tbd */; };
@@ -26,7 +26,7 @@
 		CBF3CE7717F578CC001AC307 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CBF3CE7517F578CC001AC307 /* MainMenu.xib */; };
 		CBF3CE7917F578CC001AC307 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBF3CE7817F578CC001AC307 /* Images.xcassets */; };
 		CBF3CE9317F65857001AC307 /* Crasher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CBF3CE9217F65857001AC307 /* Crasher.mm */; };
-		CBF3CE9717F65B51001AC307 /* libKSCrashLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBF3CE9617F65B51001AC307 /* libKSCrashLib.a */; };
+		CBF3CE9717F65B51001AC307 /* libSentryCrashLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBF3CE9617F65B51001AC307 /* libSentryCrashLib.a */; };
 		CBF3CE9817F65B57001AC307 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62414517EBCC9E006471F1 /* SystemConfiguration.framework */; };
 		CBF3CE9917F65B5D001AC307 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62414317EBCC97006471F1 /* libz.dylib */; };
 		CBF3CE9A17F65F64001AC307 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CB62414717EBCCA9006471F1 /* libc++.dylib */; };
@@ -50,8 +50,8 @@
 		CB62405D17EBB46B006471F1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CB62406017EBB46B006471F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CB62406217EBB46B006471F1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		CB62408117EBB4D7006471F1 /* KSCrash.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KSCrash.framework; path = "../../../Library/Developer/Xcode/DerivedData/Mac-beusbddefllzqoanxuparffwsspt/Build/Products/Debug/KSCrash.framework"; sourceTree = "<group>"; };
-		CB62412817EBCBA2006471F1 /* libKSCrashLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKSCrashLib.a; path = build/Debug/libKSCrashLib.a; sourceTree = "<group>"; };
+		CB62408117EBB4D7006471F1 /* SentryCrash.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SentryCrash.framework; path = "../../../Library/Developer/Xcode/DerivedData/Mac-beusbddefllzqoanxuparffwsspt/Build/Products/Debug/SentryCrash.framework"; sourceTree = "<group>"; };
+		CB62412817EBCBA2006471F1 /* libSentryCrashLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSentryCrashLib.a; path = build/Debug/libSentryCrashLib.a; sourceTree = "<group>"; };
 		CB62414317EBCC97006471F1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		CB62414517EBCC9E006471F1 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CB62414717EBCCA9006471F1 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
@@ -70,7 +70,7 @@
 		CBF3CE9117F65857001AC307 /* Crasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Crasher.h; path = "../../Source/Common-Examples/Crasher.h"; sourceTree = "<group>"; };
 		CBF3CE9217F65857001AC307 /* Crasher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Crasher.mm; path = "../../Source/Common-Examples/Crasher.mm"; sourceTree = "<group>"; };
 		CBF3CE9517F65B12001AC307 /* LoadableCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadableCategory.h; path = "../../Source/Common-Examples/LoadableCategory.h"; sourceTree = "<group>"; };
-		CBF3CE9617F65B51001AC307 /* libKSCrashLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKSCrashLib.a; path = "../../../Library/Developer/Xcode/DerivedData/Mac-beusbddefllzqoanxuparffwsspt/Build/Products/Debug/libKSCrashLib.a"; sourceTree = "<group>"; };
+		CBF3CE9617F65B51001AC307 /* libSentryCrashLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSentryCrashLib.a; path = "../../../Library/Developer/Xcode/DerivedData/Mac-beusbddefllzqoanxuparffwsspt/Build/Products/Debug/libSentryCrashLib.a"; sourceTree = "<group>"; };
 		CBF3CEA217F67E9D001AC307 /* CrashTesterCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrashTesterCommands.h; path = "../../Source/Common-Examples/CrashTesterCommands.h"; sourceTree = "<group>"; };
 		CBF3CEA317F67E9D001AC307 /* CrashTesterCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CrashTesterCommands.m; path = "../../Source/Common-Examples/CrashTesterCommands.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,7 +83,7 @@
 				CB8F1DD71CCAF4050022CDF0 /* libc++.tbd in Frameworks */,
 				CB62414617EBCC9E006471F1 /* SystemConfiguration.framework in Frameworks */,
 				CB62414417EBCC97006471F1 /* libz.dylib in Frameworks */,
-				CB62412917EBCBA2006471F1 /* libKSCrashLib.a in Frameworks */,
+				CB62412917EBCBA2006471F1 /* libSentryCrashLib.a in Frameworks */,
 				CB62404F17EBB46B006471F1 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -95,7 +95,7 @@
 				CBF3CE9A17F65F64001AC307 /* libc++.dylib in Frameworks */,
 				CBF3CE9917F65B5D001AC307 /* libz.dylib in Frameworks */,
 				CBF3CE9817F65B57001AC307 /* SystemConfiguration.framework in Frameworks */,
-				CBF3CE9717F65B51001AC307 /* libKSCrashLib.a in Frameworks */,
+				CBF3CE9717F65B51001AC307 /* libSentryCrashLib.a in Frameworks */,
 				CBF3CE6517F578CC001AC307 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -126,13 +126,13 @@
 			isa = PBXGroup;
 			children = (
 				CB8F1DD61CCAF4050022CDF0 /* libc++.tbd */,
-				CBF3CE9617F65B51001AC307 /* libKSCrashLib.a */,
+				CBF3CE9617F65B51001AC307 /* libSentryCrashLib.a */,
 				CB62414917EBCCBC006471F1 /* libstdc++.dylib */,
 				CB62414717EBCCA9006471F1 /* libc++.dylib */,
 				CB62414517EBCC9E006471F1 /* SystemConfiguration.framework */,
 				CB62414317EBCC97006471F1 /* libz.dylib */,
-				CB62412817EBCBA2006471F1 /* libKSCrashLib.a */,
-				CB62408117EBB4D7006471F1 /* KSCrash.framework */,
+				CB62412817EBCBA2006471F1 /* libSentryCrashLib.a */,
+				CB62408117EBB4D7006471F1 /* SentryCrash.framework */,
 				CB62401617EBB430006471F1 /* Cocoa.framework */,
 				CB62403517EBB431006471F1 /* XCTest.framework */,
 				CB62401817EBB430006471F1 /* Other Frameworks */,

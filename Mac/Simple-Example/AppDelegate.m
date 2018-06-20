@@ -8,12 +8,12 @@
 
 #import "AppDelegate.h"
 
-#import <KSCrash/KSCrash.h> // TODO: Remove this
-#import <KSCrash/KSCrashInstallation+Alert.h>
-#import <KSCrash/KSCrashInstallationStandard.h>
-#import <KSCrash/KSCrashInstallationQuincyHockey.h>
-#import <KSCrash/KSCrashInstallationEmail.h>
-#import <KSCrash/KSCrashInstallationVictory.h>
+#import <SentryCrash/SentryCrash.h> // TODO: Remove this
+#import <SentryCrash/SentryCrashInstallation+Alert.h>
+#import <SentryCrash/SentryCrashInstallationStandard.h>
+#import <SentryCrash/SentryCrashInstallationQuincyHockey.h>
+#import <SentryCrash/SentryCrashInstallationEmail.h>
+#import <SentryCrash/SentryCrashInstallationVictory.h>
 
 @implementation AppDelegate
 
@@ -35,17 +35,17 @@
 - (void) installCrashHandler
 {
     // Create an installation (choose one)
-//    KSCrashInstallation* installation = [self makeStandardInstallation];
-    KSCrashInstallation* installation = [self makeEmailInstallation];
-//    KSCrashInstallation* installation = [self makeHockeyInstallation];
-//    KSCrashInstallation* installation = [self makeQuincyInstallation];
-//    KSCrashInstallation *installation = [self makeVictoryInstallation];
+//    SentryCrashInstallation* installation = [self makeStandardInstallation];
+    SentryCrashInstallation* installation = [self makeEmailInstallation];
+//    SentryCrashInstallation* installation = [self makeHockeyInstallation];
+//    SentryCrashInstallation* installation = [self makeQuincyInstallation];
+//    SentryCrashInstallation *installation = [self makeVictoryInstallation];
 
 
     // Install the crash handler. This should be done as early as possible.
     // This will record any crashes that occur, but it doesn't automatically send them.
     [installation install];
-    [KSCrash sharedInstance].deleteBehaviorAfterSendAll = KSCDeleteNever; // TODO: Remove this
+    [SentryCrash sharedInstance].deleteBehaviorAfterSendAll = KSCDeleteNever; // TODO: Remove this
 
     // Send all outstanding reports. You can do this any time; it doesn't need
     // to happen right as the app launches. Advanced-Example shows how to defer
@@ -63,11 +63,11 @@
      }];
 }
 
-- (KSCrashInstallation*) makeEmailInstallation
+- (SentryCrashInstallation*) makeEmailInstallation
 {
     NSString* emailAddress = @"your@email.here";
 
-    KSCrashInstallationEmail* email = [KSCrashInstallationEmail sharedInstance];
+    SentryCrashInstallationEmail* email = [SentryCrashInstallationEmail sharedInstance];
     email.recipients = @[emailAddress];
     email.subject = @"Crash Report";
     email.message = @"This is a crash report";
@@ -79,16 +79,16 @@
                                noAnswer:@"No thanks"];
 
     // Uncomment to send Apple style reports instead of JSON.
-    [email setReportStyle:KSCrashEmailReportStyleApple useDefaultFilenameFormat:YES];
+    [email setReportStyle:SentryCrashEmailReportStyleApple useDefaultFilenameFormat:YES];
 
     return email;
 }
 
-- (KSCrashInstallation*) makeHockeyInstallation
+- (SentryCrashInstallation*) makeHockeyInstallation
 {
     NSString* hockeyAppIdentifier = @"PUT_YOUR_HOCKEY_APP_ID_HERE";
 
-    KSCrashInstallationHockey* hockey = [KSCrashInstallationHockey sharedInstance];
+    SentryCrashInstallationHockey* hockey = [SentryCrashInstallationHockey sharedInstance];
     hockey.appIdentifier = hockeyAppIdentifier;
     hockey.userID = @"ABC123";
     hockey.contactEmail = @"nobody@nowhere.com";
@@ -97,12 +97,12 @@
     return hockey;
 }
 
-- (KSCrashInstallation*) makeQuincyInstallation
+- (SentryCrashInstallation*) makeQuincyInstallation
 {
     //    NSURL* quincyURL = [NSURL URLWithString:@"http://localhost:8888/quincy/crash_v200.php"];
     NSURL* quincyURL = [NSURL URLWithString:@"http://put.your.quincy.url.here"];
 
-    KSCrashInstallationQuincy* quincy = [KSCrashInstallationQuincy sharedInstance];
+    SentryCrashInstallationQuincy* quincy = [SentryCrashInstallationQuincy sharedInstance];
     quincy.url = quincyURL;
     quincy.userID = @"ABC123";
     quincy.contactEmail = @"nobody@nowhere.com";
@@ -111,26 +111,26 @@
     return quincy;
 }
 
-- (KSCrashInstallation*) makeStandardInstallation
+- (SentryCrashInstallation*) makeStandardInstallation
 {
     NSURL* url = [NSURL URLWithString:@"http://put.your.url.here"];
 
-    KSCrashInstallationStandard* standard = [KSCrashInstallationStandard sharedInstance];
+    SentryCrashInstallationStandard* standard = [SentryCrashInstallationStandard sharedInstance];
     standard.url = url;
 
     return standard;
 }
 
-- (KSCrashInstallation*) makeVictoryInstallation
+- (SentryCrashInstallation*) makeVictoryInstallation
 {
     //    NSURL* url = [NSURL URLWithString:@"https://victory-demo.appspot.com/api/v1/crash/0571f5f6-652d-413f-8043-0e9531e1b689"];
     NSURL* url = [NSURL URLWithString:@"https://put.your.url.here/api/v1/crash/<application key>"];
 
-    KSCrashInstallationVictory* victory = [KSCrashInstallationVictory sharedInstance];
+    SentryCrashInstallationVictory* victory = [SentryCrashInstallationVictory sharedInstance];
     victory.url = url;
     victory.userName = @"nobody";
     victory.userEmail = @"nobody@nowhere.com";
-    
+
     return victory;
 }
 

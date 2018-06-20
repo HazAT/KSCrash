@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import <KSCrash/KSCrashInstallationConsole.h>
+#import <SentryCrash/SentryCrashInstallationConsole.h>
 
 @interface AppDelegate ()
 
@@ -17,10 +17,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    KSCrashInstallationConsole* installation = [KSCrashInstallationConsole new];
+    SentryCrashInstallationConsole* installation = [SentryCrashInstallationConsole new];
     installation.printAppleFormat = NO;
     [installation install];
-    
+
     [installation sendAllReportsWithCompletion:^(NSArray* reports, BOOL completed, NSError* error)
      {
          if(completed)
@@ -32,7 +32,7 @@
              NSLog(@"Failed to send reports: %@", error);
          }
      }];
-    
+
     return YES;
 }
 

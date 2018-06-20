@@ -1,5 +1,5 @@
 WORKSPACE:=iOS.xcworkspace
-SCHEME:=KSCrashLib
+SCHEME:=SentryCrashLib
 SDK:=iphonesimulator
 BUILD_ARGS=-workspace $(WORKSPACE) -scheme $(SCHEME) -sdk $(SDK)
 

@@ -10,18 +10,18 @@
 #import "Crasher.h"
 #import "CrashTesterCommands.h"
 
-#import <KSCrash/KSCrash.h>
-#import <KSCrash/KSCrashReportFilterSets.h>
-#import <KSCrash/KSCrashReportFilter.h>
-#import <KSCrash/KSCrashReportFilterAppleFmt.h>
-#import <KSCrash/KSCrashReportFilterBasic.h>
-#import <KSCrash/KSCrashReportFilterGZip.h>
-#import <KSCrash/KSCrashReportFilterJSON.h>
-#import <KSCrash/KSCrashReportSinkConsole.h>
-#import <KSCrash/KSCrashReportSinkEMail.h>
-#import <KSCrash/KSCrashReportSinkQuincyHockey.h>
-#import <KSCrash/KSCrashReportSinkStandard.h>
-#import <KSCrash/KSCrashReportSinkVictory.h>
+#import <SentryCrash/SentryCrash.h>
+#import <SentryCrash/SentryCrashReportFilterSets.h>
+#import <SentryCrash/SentryCrashReportFilter.h>
+#import <SentryCrash/SentryCrashReportFilterAppleFmt.h>
+#import <SentryCrash/SentryCrashReportFilterBasic.h>
+#import <SentryCrash/SentryCrashReportFilterGZip.h>
+#import <SentryCrash/SentryCrashReportFilterJSON.h>
+#import <SentryCrash/SentryCrashReportSinkConsole.h>
+#import <SentryCrash/SentryCrashReportSinkEMail.h>
+#import <SentryCrash/SentryCrashReportSinkQuincyHockey.h>
+#import <SentryCrash/SentryCrashReportSinkStandard.h>
+#import <SentryCrash/SentryCrashReportSinkVictory.h>
 #import <CrashLib/CrashLib.h>
 #import <CrashLib/CRLFramelessDWARF.h>
 #import <objc/runtime.h>
@@ -69,7 +69,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
 {
     __unsafe_unretained id blockSelf = self;
     NSMutableArray* commands = [NSMutableArray array];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Manage Reports"
                      accessoryType:UITableViewCellAccessoryDisclosureIndicator
@@ -82,7 +82,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
           };
           [controller.navigationController pushViewController:cmdController animated:YES];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Crash"
                      accessoryType:UITableViewCellAccessoryDisclosureIndicator
@@ -92,8 +92,8 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
           cmdController.title = @"Crash";
           [controller.navigationController pushViewController:cmdController animated:YES];
       }]];
-    
-    
+
+
     [commands addObject:
      [CommandEntry commandWithName:@"CrashProbe Crashes"
                      accessoryType:UITableViewCellAccessoryDisclosureIndicator
@@ -110,7 +110,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
 {
     __unsafe_unretained id blockSelf = self;
     NSMutableArray* commands = [NSMutableArray array];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Print To Console"
                      accessoryType:UITableViewCellAccessoryDisclosureIndicator
@@ -123,7 +123,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
           };
           [controller.navigationController pushViewController:cmdController animated:YES];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Send To Server"
                      accessoryType:UITableViewCellAccessoryDisclosureIndicator
@@ -136,7 +136,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
           };
           [controller.navigationController pushViewController:cmdController animated:YES];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Send As E-Mail"
                      accessoryType:UITableViewCellAccessoryDisclosureIndicator
@@ -149,24 +149,24 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
           };
           [controller.navigationController pushViewController:cmdController animated:YES];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Delete All Reports"
                      accessoryType:UITableViewCellAccessoryNone
                              block:^(UIViewController* controller)
       {
           NSLog(@"Deleting reports...");
-          [[KSCrash sharedInstance] deleteAllReports];
+          [[SentryCrash sharedInstance] deleteAllReports];
           [(CommandTVC*)controller reloadTitle];
       }]];
-    
+
     return commands;
 }
 
 - (NSArray*) mailCommands
 {
     NSMutableArray* commands = [NSMutableArray array];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Standard Reports"
                      accessoryType:UITableViewCellAccessoryNone
@@ -174,7 +174,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands mailStandard];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Unsymbolicated)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -182,7 +182,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands mailUnsymbolicated];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Partial)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -190,7 +190,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands mailPartiallySymbolicated];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Symbolicated)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -198,7 +198,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands mailSymbolicated];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Side-By-Side)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -206,7 +206,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands mailSideBySide];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style + user & system data"
                      accessoryType:UITableViewCellAccessoryNone
@@ -214,14 +214,14 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands mailSideBySideWithUserAndSystemData];
       }]];
-    
+
     return commands;
 }
 
 - (NSArray*) printCommands
 {
     NSMutableArray* commands = [NSMutableArray array];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Standard Reports"
                      accessoryType:UITableViewCellAccessoryNone
@@ -229,7 +229,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands printStandard];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Unsymbolicated)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -237,7 +237,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands printUnsymbolicated];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Partial)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -245,7 +245,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands printPartiallySymbolicated];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Symbolicated)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -253,7 +253,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands printSymbolicated];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style (Side-By-Side)"
                      accessoryType:UITableViewCellAccessoryNone
@@ -261,7 +261,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands printSideBySide];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Apple Style + user & system data"
                      accessoryType:UITableViewCellAccessoryNone
@@ -269,7 +269,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [CrashTesterCommands printSideBySideWithUserAndSystemData];
       }]];
-    
+
     return commands;
 }
 
@@ -294,7 +294,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
 {
     __unsafe_unretained id blockSelf = self;
     NSMutableArray* commands = [NSMutableArray array];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Send to KS"
                      accessoryType:UITableViewCellAccessoryNone
@@ -308,7 +308,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
                                                  error:error];
            }];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Send to Quincy"
                      accessoryType:UITableViewCellAccessoryNone
@@ -322,7 +322,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
                                                  error:error];
            }];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Send to Hockey"
                      accessoryType:UITableViewCellAccessoryNone
@@ -336,7 +336,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
                                                  error:error];
            }];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Send to Victory"
                      accessoryType:UITableViewCellAccessoryNone
@@ -351,7 +351,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
                                                  error:error];
            }];
       }]];
-    
+
     return commands;
 }
 
@@ -359,7 +359,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
 {
     NSMutableArray* commands = [NSMutableArray array];
     __block AppDelegate* blockSelf = self;
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"NSException"
                      accessoryType:UITableViewCellAccessoryNone
@@ -367,7 +367,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher throwUncaughtNSException];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"C++ Exception"
                      accessoryType:UITableViewCellAccessoryNone
@@ -375,7 +375,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher throwUncaughtCPPException];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Bad Pointer"
                      accessoryType:UITableViewCellAccessoryNone
@@ -383,7 +383,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher dereferenceBadPointer];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Null Pointer"
                      accessoryType:UITableViewCellAccessoryNone
@@ -391,7 +391,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher dereferenceNullPointer];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Corrupt Object"
                      accessoryType:UITableViewCellAccessoryNone
@@ -399,7 +399,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher useCorruptObject];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Spin Run Loop"
                      accessoryType:UITableViewCellAccessoryNone
@@ -407,7 +407,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher spinRunloop];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Stack Overflow"
                      accessoryType:UITableViewCellAccessoryNone
@@ -415,7 +415,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher causeStackOverflow];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Abort"
                      accessoryType:UITableViewCellAccessoryNone
@@ -423,7 +423,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher doAbort];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Divide By Zero"
                      accessoryType:UITableViewCellAccessoryNone
@@ -431,7 +431,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher doDiv0];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Illegal Instruction"
                      accessoryType:UITableViewCellAccessoryNone
@@ -439,7 +439,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher doIllegalInstruction];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Deallocated Object"
                      accessoryType:UITableViewCellAccessoryNone
@@ -447,7 +447,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher accessDeallocatedObject];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Deallocated Proxy"
                      accessoryType:UITableViewCellAccessoryNone
@@ -455,7 +455,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher accessDeallocatedPtrProxy];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Corrupt Memory"
                      accessoryType:UITableViewCellAccessoryNone
@@ -463,7 +463,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher corruptMemory];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Zombie NSException"
                      accessoryType:UITableViewCellAccessoryNone
@@ -471,7 +471,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher zombieNSException];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Crash in Handler"
                      accessoryType:UITableViewCellAccessoryNone
@@ -480,7 +480,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
           blockSelf.crashInHandler = YES;
           [self.crasher dereferenceBadPointer];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Deadlock main queue"
                      accessoryType:UITableViewCellAccessoryNone
@@ -488,7 +488,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher deadlock];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"Deadlock pthread"
                      accessoryType:UITableViewCellAccessoryNone
@@ -496,7 +496,7 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher pthreadAPICrash];
       }]];
-    
+
     [commands addObject:
      [CommandEntry commandWithName:@"User Defined (soft) Crash"
                      accessoryType:UITableViewCellAccessoryNone
@@ -504,8 +504,8 @@ MAKE_CATEGORIES_LOADABLE(AppDelegate_UI)
       {
           [self.crasher userDefinedCrash];
       }]];
-    
-    
+
+
     return commands;
 }
 
@@ -523,7 +523,7 @@ block:^(__unused UIViewController* controller) \
     unsigned int classCount = 0;
     Class* classes = objc_copyClassList(&classCount);
     Class foundClass = nil;
-    
+
     for(unsigned int i=0; i < classCount; i++)
     {
         Class testClass = classes[i];
@@ -542,7 +542,7 @@ block:^(__unused UIViewController* controller) \
 - (NSArray*) crash2Commands
 {
     NSMutableArray* commands = [NSMutableArray array];
-    
+
     NEW_CRASH(@"Async Safe Thread", CRLCrashAsyncSafeThread);
     NEW_CRASH(@"CXX Exception", CRLCrashCXXException);
     NEW_CRASH(@"ObjC Exception", CRLCrashObjCException);
@@ -573,7 +573,7 @@ block:^(__unused UIViewController* controller) \
         [[self getSwiftCrashObject] crash]; \
     }]];
 
-    
+
     return commands;
 }
 

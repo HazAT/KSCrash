@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import KSCrash
+import SentryCrash
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,14 +18,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         let emailAddress = "your@email.here"
-        
-        let installation = KSCrashInstallationEmail.sharedInstance()
+
+        let installation = SentryCrashInstallationEmail.sharedInstance()
         installation?.recipients = [emailAddress]
         installation?.subject = "Crash Report"
         installation?.message = "This is a crash report"
         installation?.filenameFmt = "crash-report-%d.json.gz"
-//        installation.reportStyle = KSCrashEmailReportStyleJSON
-        
+//        installation.reportStyle = SentryCrashEmailReportStyleJSON
+
         installation?.addConditionalAlert(withTitle: "Crash Detected",
             message: "The app crashed last time it was launched. Send a crash report?",
             yesAnswer: "Sure!",
@@ -40,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Failed to send reports: \(error)")
             }
         }
-        
+
         return true
     }
 
@@ -68,4 +68,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-

@@ -1421,7 +1421,7 @@
                 "crashed": false,
                 "current_thread": false,
                 "index": 5,
-                "name": "KSCrash Exception Handler (Secondary)",
+                "name": "SentryCrash Exception Handler (Secondary)",
                 "registers": {
                     "basic": {
                         "cpsr": 16,
@@ -1474,7 +1474,7 @@
                 "crashed": false,
                 "current_thread": false,
                 "index": 6,
-                "name": "KSCrash Exception Handler (Primary)",
+                "name": "SentryCrash Exception Handler (Primary)",
                 "registers": {
                     "basic": {
                         "cpsr": 1610612752,

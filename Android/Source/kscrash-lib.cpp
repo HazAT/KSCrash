@@ -24,14 +24,14 @@
 #include <string>
 #include "KSJNI.h"
 #include "KSDate.h"
-#include "KSCrashC.h"
+#include "SentryCrashC.h"
 
 static jclass java_util_ArrayList;
 static jmethodID java_util_ArrayList_;
 static jmethodID java_util_ArrayList_add;
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_internalReportUserException(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_internalReportUserException(JNIEnv *env, jobject instance,
                                                               jstring name_, jstring reason_,
                                                               jstring language_, jstring lineOfCode_,
                                                               jstring stackTraceJSON_,
@@ -43,7 +43,7 @@ Java_org_stenerud_kscrash_KSCrash_internalReportUserException(JNIEnv *env, jobje
     const char *lineOfCode = env->GetStringUTFChars(lineOfCode_, 0);
     const char *stackTraceJSON = env->GetStringUTFChars(stackTraceJSON_, 0);
 
-    kscrash_reportUserException(name, reason, language, lineOfCode, stackTraceJSON, shouldLogAllThreads, shouldTerminateProgram);
+    sentrycrash_reportUserException(name, reason, language, lineOfCode, stackTraceJSON, shouldLogAllThreads, shouldTerminateProgram);
 
     env->ReleaseStringUTFChars(name_, name);
     env->ReleaseStringUTFChars(reason_, reason);
@@ -53,51 +53,51 @@ Java_org_stenerud_kscrash_KSCrash_internalReportUserException(JNIEnv *env, jobje
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_notifyAppInForeground(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_notifyAppInForeground(JNIEnv *env, jobject instance,
                                                         jboolean isInForeground) {
-    kscrash_notifyAppInForeground(isInForeground);
+    sentrycrash_notifyAppInForeground(isInForeground);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_notifyAppActive(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_notifyAppActive(JNIEnv *env, jobject instance,
                                                   jboolean isActive) {
-    kscrash_notifyAppActive(isActive);
+    sentrycrash_notifyAppActive(isActive);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_notifyAppCrash(JNIEnv *env, jobject instance) {
-    kscrash_notifyAppCrash();
+Java_org_stenerud_sentrycrash_SentryCrash_notifyAppCrash(JNIEnv *env, jobject instance) {
+    sentrycrash_notifyAppCrash();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_notifyAppTerminate(JNIEnv *env, jobject instance) {
-    kscrash_notifyAppTerminate();
+Java_org_stenerud_sentrycrash_SentryCrash_notifyAppTerminate(JNIEnv *env, jobject instance) {
+    sentrycrash_notifyAppTerminate();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_internalAddUserReportJSON(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_internalAddUserReportJSON(JNIEnv *env, jobject instance,
                                                             jstring userReportJSON_) {
     const char *userReportJSON = env->GetStringUTFChars(userReportJSON_, 0);
-    kscrash_addUserReport(userReportJSON, (int)strlen(userReportJSON));
+    sentrycrash_addUserReport(userReportJSON, (int)strlen(userReportJSON));
     env->ReleaseStringUTFChars(userReportJSON_, userReportJSON);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_internalSetActiveMonitors(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_internalSetActiveMonitors(JNIEnv *env, jobject instance,
                                                             jint activeMonitors) {
-    kscrash_setMonitoring((KSCrashMonitorType)activeMonitors);
+    sentrycrash_setMonitoring((SentryCrashMonitorType)activeMonitors);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_internalSetUserInfoJSON(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_internalSetUserInfoJSON(JNIEnv *env, jobject instance,
                                                           jstring userInfoJSON_) {
     const char *userInfoJSON = env->GetStringUTFChars(userInfoJSON_, 0);
-    kscrash_setUserInfoJSON(userInfoJSON);
+    sentrycrash_setUserInfoJSON(userInfoJSON);
     env->ReleaseStringUTFChars(userInfoJSON_, userInfoJSON);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_initJNI(JNIEnv *env, jobject instance) {
+Java_org_stenerud_sentrycrash_SentryCrash_initJNI(JNIEnv *env, jobject instance) {
     static bool isInitialized = false;
     if(!isInitialized) {
         ksjni_init(env);
@@ -111,13 +111,13 @@ Java_org_stenerud_kscrash_KSCrash_initJNI(JNIEnv *env, jobject instance) {
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_org_stenerud_kscrash_KSCrash_internalGetAllReports(JNIEnv *env, jobject instance) {
-    int reportCount = kscrash_getReportCount();
+Java_org_stenerud_sentrycrash_SentryCrash_internalGetAllReports(JNIEnv *env, jobject instance) {
+    int reportCount = sentrycrash_getReportCount();
     int64_t reportIDs[reportCount];
-    reportCount = kscrash_getReportIDs(reportIDs, reportCount);
+    reportCount = sentrycrash_getReportIDs(reportIDs, reportCount);
     jobject array = env->NewObject(java_util_ArrayList, java_util_ArrayList_, reportCount);
     for(int i = 0; i < reportCount; i++) {
-        const char* report = kscrash_readReport(reportIDs[i]);
+        const char* report = sentrycrash_readReport(reportIDs[i]);
         if(report != NULL) {
             jstring element = env->NewStringUTF(report);
             env->CallBooleanMethod(array, java_util_ArrayList_add, element);
@@ -128,44 +128,44 @@ Java_org_stenerud_kscrash_KSCrash_internalGetAllReports(JNIEnv *env, jobject ins
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_setMaxReportCount(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_setMaxReportCount(JNIEnv *env, jobject instance,
                                                     jint maxReportCount) {
-    kscrash_setMaxReportCount(maxReportCount);
+    sentrycrash_setMaxReportCount(maxReportCount);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_setIntrospectMemory(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_setIntrospectMemory(JNIEnv *env, jobject instance,
                                                       jboolean shouldIntrospectMemory) {
-    kscrash_setIntrospectMemory(shouldIntrospectMemory);
+    sentrycrash_setIntrospectMemory(shouldIntrospectMemory);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_setAddConsoleLogToReport(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_SentryCrash_setAddConsoleLogToReport(JNIEnv *env, jobject instance,
                                                            jboolean shouldAddConsoleLogToReport) {
-    kscrash_setAddConsoleLogToReport(shouldAddConsoleLogToReport);
+    sentrycrash_setAddConsoleLogToReport(shouldAddConsoleLogToReport);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_install__Ljava_lang_String_2Ljava_lang_String_2(JNIEnv *env,
+Java_org_stenerud_sentrycrash_SentryCrash_install__Ljava_lang_String_2Ljava_lang_String_2(JNIEnv *env,
                                                                                   jobject instance,
                                                                                   jstring appName_,
                                                                                   jstring installDir_) {
     const char *appName = env->GetStringUTFChars(appName_, 0);
     const char *installDir = env->GetStringUTFChars(installDir_, 0);
 
-    kscrash_install(appName, installDir);
+    sentrycrash_install(appName, installDir);
 
     env->ReleaseStringUTFChars(appName_, appName);
     env->ReleaseStringUTFChars(installDir_, installDir);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_KSCrash_deleteAllReports(JNIEnv *env, jobject instance) {
-    kscrash_deleteAllReports();
+Java_org_stenerud_sentrycrash_SentryCrash_deleteAllReports(JNIEnv *env, jobject instance) {
+    sentrycrash_deleteAllReports();
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_org_stenerud_kscrash_MainActivity_stringFromTimestamp(JNIEnv *env, jobject instance,
+Java_org_stenerud_sentrycrash_MainActivity_stringFromTimestamp(JNIEnv *env, jobject instance,
                                                            jlong timestamp) {
     char buffer[21];
     buffer[0] = 0;
@@ -174,7 +174,7 @@ Java_org_stenerud_kscrash_MainActivity_stringFromTimestamp(JNIEnv *env, jobject 
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_MainActivity_causeNativeCrash(JNIEnv *env, jobject instance) {
+Java_org_stenerud_sentrycrash_MainActivity_causeNativeCrash(JNIEnv *env, jobject instance) {
     char* str = "hello";
     char* ptr = NULL;
     strcpy(ptr, str);
@@ -191,6 +191,6 @@ const char* MyException::what() const _GLIBCXX_USE_NOEXCEPT
     return "Something bad happened...";
 }
 extern "C" JNIEXPORT void JNICALL
-Java_org_stenerud_kscrash_MainActivity_causeCPPException(JNIEnv *env, jobject instance) {
+Java_org_stenerud_sentrycrash_MainActivity_causeCPPException(JNIEnv *env, jobject instance) {
     throw MyException();
 }

@@ -1,4 +1,4 @@
-package org.stenerud.kscrash;
+package org.stenerud.sentrycrash;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         try {
-            KSCrashInstallation installation = new KSCrashInstallationStandard(this, new URL("http://10.0.2.2:5000/crashreport"));
-//            KSCrashInstallation installation = new KSCrashInstallationEmail(this, "nobody@nowhere.com");
+            SentryCrashInstallation installation = new SentryCrashInstallationStandard(this, new URL("http://10.0.2.2:5000/crashreport"));
+//            SentryCrashInstallation installation = new SentryCrashInstallationEmail(this, "nobody@nowhere.com");
             installation.install();
             installation.sendOutstandingReports();
         } catch (IOException e) {
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
             report.put("test", "a value");
             reports.add(new JSONObject(report));
             URL url = new URL("http://10.0.2.2:5000/crashreport");
-            KSCrashInstallation installation = new KSCrashInstallationStandard(this, url);
-            installation.sendOutstandingReports(reports, new KSCrashReportFilter.CompletionCallback() {
+            SentryCrashInstallation installation = new SentryCrashInstallationStandard(this, url);
+            installation.sendOutstandingReports(reports, new SentryCrashReportFilter.CompletionCallback() {
                 @Override
-                public void onCompletion(List reports) throws KSCrashReportFilteringFailedException {
+                public void onCompletion(List reports) throws SentryCrashReportFilteringFailedException {
                     Log.i("MainActivity", "Sent " + reports.size() + " reports");
                 }
             });

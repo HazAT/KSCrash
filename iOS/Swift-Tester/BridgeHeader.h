@@ -1,2 +1,2 @@
-#import <KSCrash/KSCrash.h>
-#import <KSCrash/KSCrashInstallationEmail.h>
+#import <SentryCrash/SentryCrash.h>
+#import <SentryCrash/SentryCrashInstallationEmail.h>

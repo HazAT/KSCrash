@@ -12,13 +12,13 @@ cmake_minimum_required(VERSION 3.4.1)
 include_directories(${CMAKE_SOURCE_DIR}/../Source)
 include_directories(${CMAKE_SOURCE_DIR}/../Source/monitors)
 include_directories(${CMAKE_SOURCE_DIR}/../Source/tools)
-include_directories(${CMAKE_SOURCE_DIR}/../../Source/KSCrash)
-include_directories(${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording)
-include_directories(${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors)
-include_directories(${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools)
+include_directories(${CMAKE_SOURCE_DIR}/../../Source/SentryCrash)
+include_directories(${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording)
+include_directories(${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors)
+include_directories(${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools)
 
 add_library( # Sets the name of the library.
-             kscrash-lib
+             sentrycrash-lib
 
              # Sets the library as a shared library.
              SHARED
@@ -26,10 +26,10 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              # Associated headers in the same location as their source
              # file are automatically included.
-             ${CMAKE_SOURCE_DIR}/../Source/kscrash-lib.cpp
-             ${CMAKE_SOURCE_DIR}/../Source/KSCrashCachedData.c
+             ${CMAKE_SOURCE_DIR}/../Source/sentrycrash-lib.cpp
+             ${CMAKE_SOURCE_DIR}/../Source/SentryCrashCachedData.c
              ${CMAKE_SOURCE_DIR}/../Source/KSJNI.cpp
-             ${CMAKE_SOURCE_DIR}/../Source/monitors/KSCrashMonitor_System.c
+             ${CMAKE_SOURCE_DIR}/../Source/monitors/SentryCrashMonitor_System.c
              ${CMAKE_SOURCE_DIR}/../Source/tools/KSCPU.c
              ${CMAKE_SOURCE_DIR}/../Source/tools/KSDebug.c
              ${CMAKE_SOURCE_DIR}/../Source/tools/KSDynamicLinker.c
@@ -39,26 +39,26 @@ add_library( # Sets the name of the library.
              ${CMAKE_SOURCE_DIR}/../Source/tools/KSStackCursor_SelfThread.c
              ${CMAKE_SOURCE_DIR}/../Source/tools/KSSymbolicator.c
              ${CMAKE_SOURCE_DIR}/../Source/tools/KSThread.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/KSCrashC.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/KSCrashReport.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/KSCrashReportFixer.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/KSCrashReportStore.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors/KSCrashMonitor.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors/KSCrashMonitor_AppState.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors/KSCrashMonitor_CPPException.cpp
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors/KSCrashMonitor_Signal.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors/KSCrashMonitor_User.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Monitors/KSCrashMonitorType.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSDate.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSDemangle_CPP.cpp
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSFileUtils.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSJSONCodec.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSLogger.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSSignalInfo.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSStackCursor.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSStackCursor_Backtrace.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSStackCursor_MachineContext.c
-             ${CMAKE_SOURCE_DIR}/../../Source/KSCrash/Recording/Tools/KSString.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashC.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashReport.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashReportFixer.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/SentryCrashReportStore.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor_AppState.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor_CPPException.cpp
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor_Signal.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitor_User.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Monitors/SentryCrashMonitorType.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSDate.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSDemangle_CPP.cpp
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSFileUtils.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSJSONCodec.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSLogger.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSSignalInfo.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSStackCursor.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSStackCursor_Backtrace.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSStackCursor_MachineContext.c
+             ${CMAKE_SOURCE_DIR}/../../Source/SentryCrash/Recording/Tools/KSString.c
            )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -79,7 +79,7 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       kscrash-lib
+                       sentrycrash-lib
 
                        # Links the target library to the log library
                        # included in the NDK.

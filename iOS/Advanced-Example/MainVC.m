@@ -5,16 +5,16 @@
 
 #import "MainVC.h"
 
-#import <KSCrash/KSCrash.h>
+#import <SentryCrash/SentryCrash.h>
 #import "AppDelegate.h"
-#import <KSCrash/KSCrashInstallation.h>
+#import <SentryCrash/SentryCrashInstallation.h>
 
 /**
  * Some sensitive info that should not be printed out at any time.
  *
  * If you have Objective-C introspection turned on, it would normally
  * introspect this class, unless you add it to the list of
- * "do not introspect classes" in KSCrash. We do precisely this in 
+ * "do not introspect classes" in SentryCrash. We do precisely this in
  * -[AppDelegate configureAdvancedSettings]
  */
 @interface SensitiveInfo: NSObject
@@ -41,7 +41,7 @@
 {
     if((self = [super initWithCoder:aDecoder]))
     {
-        // This info could be leaked during introspection unless you tell KSCrash to ignore it.
+        // This info could be leaked during introspection unless you tell SentryCrash to ignore it.
         // See -[AppDelegate configureAdvancedSettings] for more info.
         self.info = [SensitiveInfo new];
         self.info.password = @"it's a secret!";
@@ -69,8 +69,8 @@
 
 - (void) onReportedCrash:(id)sender {
     NSException* ex = [NSException exceptionWithName:@"testing exception name" reason:@"testing exception reason" userInfo:@{@"testing exception key":@"testing exception value"}];
-    [KSCrash sharedInstance].currentSnapshotUserReportedExceptionHandler(ex);
-    [KSCrash sharedInstance].monitoring = KSCrashMonitorTypeProductionSafe;
+    [SentryCrash sharedInstance].currentSnapshotUserReportedExceptionHandler(ex);
+    [SentryCrash sharedInstance].monitoring = SentryCrashMonitorTypeProductionSafe;
     [self sendAllExceptions];
 }
 
@@ -81,7 +81,7 @@
         if(completed) {
             NSLog(@"\n****Sent %lu reports", (unsigned long)[filteredReports count]);
             NSLog(@"\n%@", filteredReports);
-            //        [[KSCrash sharedInstance] deleteAllReports];
+            //        [[SentryCrash sharedInstance] deleteAllReports];
         } else {
             NSLog(@"Failed to send reports: %@", error);
         }

@@ -8,7 +8,7 @@
 #import "AppDelegate+UI.h"
 #import "Configuration.h"
 
-#import <KSCrash/KSCrash.h>
+#import <SentryCrash/SentryCrash.h>
 
 
 /* Example app that demonstrates the many ways in which an application
@@ -22,7 +22,7 @@
 
 static BOOL g_crashInHandler = NO;
 
-static void onCrash(const KSCrashReportWriter* writer)
+static void onCrash(const SentryCrashReportWriter* writer)
 {
     if(g_crashInHandler)
     {
@@ -52,7 +52,7 @@ static void onCrash(const KSCrashReportWriter* writer)
 
 - (void) installCrashHandler
 {
-    KSCrash* handler = [KSCrash sharedInstance];
+    SentryCrash* handler = [SentryCrash sharedInstance];
 
     handler.deadlockWatchdogInterval = 5.0f;
     handler.catchZombies = YES;

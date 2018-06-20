@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:TVOS/KSCrash-TVOS.xcodeproj">
+      location = "group:TVOS/SentryCrash-TVOS.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:TVOS/Example-Apps-TVOS.xcodeproj">

@@ -223,7 +223,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Send to Server" id="376">
                         <items>
-                            <menuItem title="KSCrash" id="377">
+                            <menuItem title="SentryCrash" id="377">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="onSendToKS:" target="494" id="cyB-GI-zcE"/>

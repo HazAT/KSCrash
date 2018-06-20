@@ -5,13 +5,13 @@
 
 #import "AppDelegate.h"
 
-#import <KSCrash/KSCrashInstallation+Alert.h>
-#import <KSCrash/KSCrashInstallationStandard.h>
-#import <KSCrash/KSCrashInstallationQuincyHockey.h>
-#import <KSCrash/KSCrashInstallationEmail.h>
-#import <KSCrash/KSCrashInstallationVictory.h>
-#import <KSCrash/KSCrashInstallationConsole.h>
-#import <KSCrash/KSCrash.h>
+#import <SentryCrash/SentryCrashInstallation+Alert.h>
+#import <SentryCrash/SentryCrashInstallationStandard.h>
+#import <SentryCrash/SentryCrashInstallationQuincyHockey.h>
+#import <SentryCrash/SentryCrashInstallationEmail.h>
+#import <SentryCrash/SentryCrashInstallationVictory.h>
+#import <SentryCrash/SentryCrashInstallationConsole.h>
+#import <SentryCrash/SentryCrash.h>
 
 
 /* More advanced crash reporting example.
@@ -22,7 +22,7 @@
  * This mitigates issues where the app crashes during initialization (in which
  * case you'd never see a crash report).
  *
- * This example also enables some more advanced features of KSCrash. See
+ * This example also enables some more advanced features of SentryCrash. See
  * configureAdvancedSettings.
  */
 
@@ -33,7 +33,7 @@
 didFinishLaunchingWithOptions:(__unused NSDictionary *) launchOptions
 {
     [self installCrashHandler];
-    
+
     return YES;
 }
 
@@ -46,10 +46,10 @@ didFinishLaunchingWithOptions:(__unused NSDictionary *) launchOptions
     // This can be useful when debugging on the simulator.
     // Normally, there's no way to see console messages in the simulator,
     // except when running in the debugger, which disables the crash handler.
-    // This feature redirects KSCrash console messages to a log file instead.
-//    [[KSCrash sharedInstance] redirectConsoleLogsToDefaultFile];
-    
-    
+    // This feature redirects SentryCrash console messages to a log file instead.
+//    [[SentryCrash sharedInstance] redirectConsoleLogsToDefaultFile];
+
+
     // Create an installation (choose one)
 
     self.crashInstallation = [self makeConsoleInstallation];
@@ -58,50 +58,50 @@ didFinishLaunchingWithOptions:(__unused NSDictionary *) launchOptions
     //    self.crashInstallation = [self makeHockeyInstallation];
     //    self.crashInstallation = [self makeQuincyInstallation];
     //    self.crashInstallation = [self makeVictoryInstallation];
-    
-    
+
+
     // Install the crash handler. This should be done as early as possible.
     // This will record any crashes that occur, but it doesn't automatically send them.
     [self.crashInstallation install];
-    
+
     // You may also optionally configure some more advanced settings if you like.
     [self configureAdvancedSettings];
-    
+
     // Crash reports will be sent by LoaderVC.
 }
 
 
-- (KSCrashInstallation*) makeConsoleInstallation
+- (SentryCrashInstallation*) makeConsoleInstallation
 {
-    return [KSCrashInstallationConsole new];
+    return [SentryCrashInstallationConsole new];
 }
 
-- (KSCrashInstallation*) makeEmailInstallation
+- (SentryCrashInstallation*) makeEmailInstallation
 {
     NSString* emailAddress = @"your@email.here";
-    
-    KSCrashInstallationEmail* email = [KSCrashInstallationEmail sharedInstance];
+
+    SentryCrashInstallationEmail* email = [SentryCrashInstallationEmail sharedInstance];
     email.recipients = @[emailAddress];
     email.subject = @"Crash Report";
     email.message = @"This is a crash report";
     email.filenameFmt = @"crash-report-%d.txt.gz";
-    
+
     [email addConditionalAlertWithTitle:@"Crash Detected"
                                 message:@"The app crashed last time it was launched. Send a crash report?"
                               yesAnswer:@"Sure!"
                                noAnswer:@"No thanks"];
-    
+
     // Uncomment to send Apple style reports instead of JSON.
-//    [email setReportStyle:KSCrashEmailReportStyleApple useDefaultFilenameFormat:YES];
+//    [email setReportStyle:SentryCrashEmailReportStyleApple useDefaultFilenameFormat:YES];
 
     return email;
 }
 
-- (KSCrashInstallation*) makeHockeyInstallation
+- (SentryCrashInstallation*) makeHockeyInstallation
 {
     NSString* hockeyAppIdentifier = @"PUT_YOUR_HOCKEY_APP_ID_HERE";
-    
-    KSCrashInstallationHockey* hockey = [KSCrashInstallationHockey sharedInstance];
+
+    SentryCrashInstallationHockey* hockey = [SentryCrashInstallationHockey sharedInstance];
     hockey.appIdentifier = hockeyAppIdentifier;
     hockey.userID = @"ABC123";
     hockey.contactEmail = @"nobody@nowhere.com";
@@ -109,47 +109,47 @@ didFinishLaunchingWithOptions:(__unused NSDictionary *) launchOptions
 
     // Don't wait until reachable because the main VC won't show until the process completes.
     hockey.waitUntilReachable = NO;
-    
+
     return hockey;
 }
 
-- (KSCrashInstallation*) makeQuincyInstallation
+- (SentryCrashInstallation*) makeQuincyInstallation
 {
 //    NSURL* quincyURL = [NSURL URLWithString:@"http://localhost:8888/quincy/crash_v200.php"];
     NSURL* quincyURL = [NSURL URLWithString:@"http://put.your.quincy.url.here"];
-    
-    KSCrashInstallationQuincy* quincy = [KSCrashInstallationQuincy sharedInstance];
+
+    SentryCrashInstallationQuincy* quincy = [SentryCrashInstallationQuincy sharedInstance];
     quincy.url = quincyURL;
     quincy.userID = @"ABC123";
     quincy.contactEmail = @"nobody@nowhere.com";
     quincy.crashDescription = @"Something broke!";
-    
+
     // Don't wait until reachable because the main VC won't show until the process completes.
     quincy.waitUntilReachable = NO;
-    
+
     return quincy;
 }
 
-- (KSCrashInstallation*) makeStandardInstallation
+- (SentryCrashInstallation*) makeStandardInstallation
 {
     NSURL* url = [NSURL URLWithString:@"http://put.your.url.here"];
-    
-    KSCrashInstallationStandard* standard = [KSCrashInstallationStandard sharedInstance];
+
+    SentryCrashInstallationStandard* standard = [SentryCrashInstallationStandard sharedInstance];
     standard.url = url;
-    
+
     return standard;
 }
 
-- (KSCrashInstallationVictory*) makeVictoryInstallation
+- (SentryCrashInstallationVictory*) makeVictoryInstallation
 {
 //    NSURL* url = [NSURL URLWithString:@"https://victory-demo.appspot.com/api/v1/crash/0571f5f6-652d-413f-8043-0e9531e1b689"];
     NSURL* url = [NSURL URLWithString:@"https://put.your.url.here/api/v1/crash/<application key>"];
-    
-    KSCrashInstallationVictory* victory = [KSCrashInstallationVictory sharedInstance];
+
+    SentryCrashInstallationVictory* victory = [SentryCrashInstallationVictory sharedInstance];
     victory.url = url;
     victory.userName = [[UIDevice currentDevice] name];
     victory.userEmail = @"nobody@nowhere.com";
-    
+
     return victory;
 }
 
@@ -158,7 +158,7 @@ didFinishLaunchingWithOptions:(__unused NSDictionary *) launchOptions
 #pragma mark - Advanced Crash Handling (optional) -
 // ======================================================================
 
-static void advanced_crash_callback(const KSCrashReportWriter* writer)
+static void advanced_crash_callback(const SentryCrashReportWriter* writer)
 {
     // You can add extra user data at crash time if you want.
     writer->addBooleanElement(writer, "some_bool_value", NO);
@@ -167,13 +167,13 @@ static void advanced_crash_callback(const KSCrashReportWriter* writer)
 
 - (void) configureAdvancedSettings
 {
-    KSCrash* handler = [KSCrash sharedInstance];
-    
-    // Settings in KSCrash.h
+    SentryCrash* handler = [SentryCrash sharedInstance];
+
+    // Settings in SentryCrash.h
     handler.deadlockWatchdogInterval = 8;
     handler.userInfo = @{@"someKey": @"someValue"};
     handler.onCrash = advanced_crash_callback;
-    handler.monitoring = KSCrashMonitorTypeProductionSafe;
+    handler.monitoring = SentryCrashMonitorTypeProductionSafe;
 
     // Do not introspect class SensitiveInfo (see MainVC)
     // When added to the "do not introspect" list, the Objective-C introspector
